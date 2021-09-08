@@ -25,13 +25,19 @@ mongoose.connect(mongo_db_url, {useNewUrlParser: true, useUnifiedTopology: true}
 var booked_flight_data = require("./models/booked_flights_log_model");
 var booked_hotel_data = require("./models/booked_hotels_log");
 
-app.get("/get-recent-bookings/:from/:to", (req, res, next) => {
+app.get("/get-recent-bookings/:from/:to", async (req, res, next) => {
     let pagesstart = req.params.from;
     let pageslast = req.params.to;
     console.log(pagesstart);
     console.log(pageslast);
+    
     //add some code here
-    res.send({booking: ["one", "two", "three"]})
+    let flight_bookings = await booked_flight_data.find({});
+    let hotel_bookings = await booked_flight_data.find({});
+    let recent_bookings = [...flight_bookings, ...hotel_bookings];
+    
+    //res.send({booking: ["one", "two", "three"]})
+    res.send(recent_bookings);
 });
 
 app.get("/get-booking-by-confirmation-number/:confirmation", async (req, res, next)=>{

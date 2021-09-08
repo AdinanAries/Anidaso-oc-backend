@@ -6,6 +6,9 @@ let booked_hotels_log_schema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         reqiured: true,
     },
+    booking_date: {
+        type: String
+    },
     is_anidaso_client_user_id: {
         type: String
     },
