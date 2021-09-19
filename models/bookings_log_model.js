@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 require("mongoose-type-url");
 
-let booked_flights_log_schema = mongoose.Schema({
+let bookings_log_schema = mongoose.Schema({
     id: {
         type: mongoose.Schema.Types.ObjectId,
         reqiured: true,
+    },
+    booking_type: {
+        type: String
     },
     booking_date: {
         type: String
@@ -17,4 +20,4 @@ let booked_flights_log_schema = mongoose.Schema({
     }
 });
 
-module.exports = new mongoose.model("booked_flights_log", booked_flights_log_schema);
+module.exports = new mongoose.model("bookings_log", bookings_log_schema);
