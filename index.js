@@ -34,7 +34,10 @@ app.get("/get-recent-bookings/:offset/:limit", async (req, res, next) => {
     console.log(limit);
 
     //add some code here
-    let bookings = await bookings_data.find({}).sort({ _id: -1 }).skip((offset)).limit(limit);
+    let bookings = await bookings_data.find({}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        console.log(err);
+        res.send([]);
+    });
     //let hotel_bookings = await booked_flight_data.find({});
     //let recent_bookings = [...flight_bookings, ...hotel_bookings];
     
@@ -43,13 +46,16 @@ app.get("/get-recent-bookings/:offset/:limit", async (req, res, next) => {
 
 });
 
-app.get("/get-booking-by-confirmation-number/:confirmation", async (req, res, next)=>{
+app.get("/get-booking-by-confirmation-number/:reference", async (req, res, next)=>{
     
-    let confirmation = req.params.confirmation;
-    console.log(confirmation);
+    let reference = req.params.reference;
+    console.log(reference);
 
     let booking = await bookings_data.find({
-        "booking_data.data.associatedRecords.reference": confirmation
+        "booking_data.data.associatedRecords.reference": reference
+    }).catch(err => {
+        console.log(err);
+        res.send([]);
     });
 
     res.send(booking);
@@ -84,6 +90,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
         bookings = await bookings_data.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
 
     }else if(email === '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
@@ -92,6 +101,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
 
     }else if(email === '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
@@ -99,6 +111,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
         bookings = await bookings_data.find({
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
         
     }else if(email === '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
@@ -106,6 +121,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
         bookings = await bookings_data.find({
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
         
     }else if(email !== '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
@@ -115,6 +133,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
         
     }else if(email !== '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
@@ -123,6 +144,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
         
     }else if(email !== '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
@@ -131,6 +155,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
         
     }else{
@@ -142,6 +169,9 @@ app.post("/search-booked-flight/", async (req, res, next) => {
             "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
             "booking_data.data.flightOffers.itineraries.segments.departure.at": departureDate,
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
         });
 
     }
@@ -171,6 +201,13 @@ app.post("/search-booked-hotel/", async (req, res, next) => {
 
     res.send(booking);*/
 
+});
+
+app.get("/get-notifications/:skip/:limit", (req, res, next) => {
+    //get notifications from database here
+    console.log("notifications skip: ", req.params.skip);
+    console.log("notifications limit: ", req.params.limit);
+    res.send(["one", "two", "three", "four"]);
 });
 
 const PORT = process.env.PORT || 4000;
