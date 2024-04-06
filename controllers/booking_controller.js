@@ -1,5 +1,5 @@
 //models
-const BookingHistory = require("../models/bookingHistory");
+const BookingHistory = require("../mongo_db_connections");
 
 const get_recent_bookings = async (req, res, next) => {
 

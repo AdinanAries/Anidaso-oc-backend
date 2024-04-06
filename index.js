@@ -1,7 +1,6 @@
 const { response } = require("express");
 const express = require("express");
 const app = express();
-var mongoose = require("mongoose");
 require("dotenv").config();
 
 app.use(function(req, res, next) {
@@ -14,12 +13,6 @@ app.use(function(req, res, next) {
 app.use(express.json()); 
 // For parsing application/x-www-form-urlencoded 
 app.use(express.urlencoded({ extended: true }));
-
-//mongo db atlass stuff
-var mongo_db_url = process.env.MONGO_DB_URL;
-mongoose.connect(mongo_db_url, {useNewUrlParser: true, useUnifiedTopology: true}, ()=>{
-  console.log("connected to database successfully")
-});
 
 // routes
 app.use("/api/bookings", require("./routes/booking_routes"));

@@ -84,4 +84,4 @@ const bookingHistorySchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('BookingHistory', bookingHistorySchema);
+module.exports = bookingHistorySchema;
