@@ -20,7 +20,11 @@ let welldugo_oc_conn = mongoose.createConnection(welldugo_oc_url, {useNewUrlPars
   console.log("connected to database successfully")
 });*/
 
+// welldugo models
 const BookingHistory = welldugo_conn.model('BookingHistory', bookingHistorySchema);
+
+//welldugo oc models
+// will go here
 
 module.exports = {
     BookingHistory,
