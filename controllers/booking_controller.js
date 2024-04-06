@@ -1,5 +1,5 @@
 //models
-var bookings_data = require("./models/bookings_log_model");
+const BookingHistory = require("../models/bookingHistory");
 
 const get_recent_bookings = async (req, res, next) => {
 
@@ -11,7 +11,7 @@ const get_recent_bookings = async (req, res, next) => {
     console.log(limit);
 
     //add some code here
-    let bookings = await bookings_data.find({}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+    let bookings = await BookingHistory.find({}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
         console.log(err);
         res.send([]);
     });
@@ -28,7 +28,7 @@ const get_booking_by_reference_number = async (req, res, next)=>{
     let reference = req.params.reference;
     console.log(reference);
 
-    let booking = await bookings_data.find({
+    let booking = await BookingHistory.find({
         "booking_data.data.associatedRecords.reference": reference
     }).catch(err => {
         console.log(err);
@@ -40,7 +40,7 @@ const get_booking_by_reference_number = async (req, res, next)=>{
 
 const get_booking_by_id = async (req, res, next) => {
     let id = req.params.id;
-    let booking = await bookings_data.findById(id);
+    let booking = await BookingHistory.findById(id);
     res.send(booking);
 }
 
@@ -64,7 +64,7 @@ const search_booked_flight = async (req, res, next) => {
 
     if(email !== '' && departureDate === '' && returnDate === '' && origin === '' && destination === ''){
         
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email
         }).catch(err => {
@@ -74,7 +74,7 @@ const search_booked_flight = async (req, res, next) => {
 
     }else if(email === '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
         
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
@@ -85,7 +85,7 @@ const search_booked_flight = async (req, res, next) => {
 
     }else if(email === '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
         
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
         }).catch(err => {
@@ -95,7 +95,7 @@ const search_booked_flight = async (req, res, next) => {
         
     }else if(email === '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
 
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
         }).catch(err => {
@@ -105,7 +105,7 @@ const search_booked_flight = async (req, res, next) => {
         
     }else if(email !== '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
         
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
@@ -117,7 +117,7 @@ const search_booked_flight = async (req, res, next) => {
         
     }else if(email !== '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
 
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
@@ -128,7 +128,7 @@ const search_booked_flight = async (req, res, next) => {
         
     }else if(email !== '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
 
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
@@ -139,7 +139,7 @@ const search_booked_flight = async (req, res, next) => {
         
     }else{
 
-        bookings = await bookings_data.find({
+        bookings = await BookingHistory.find({
             booking_type: "flight",
             "booking_data.data.travelers.contact.emailAddress": email,
             "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
