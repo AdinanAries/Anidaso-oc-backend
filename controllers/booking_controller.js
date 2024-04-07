@@ -31,7 +31,7 @@ const get_booking_by_reference_number = async (req, res, next)=>{
     console.log(reference);
 
     let booking = await BookingHistory.find({
-        "booking_data.data.associatedRecords.reference": reference
+        "originPayloads.booking_reference": reference
     }).catch(err => {
         console.log(err);
         res.send([]);
@@ -50,11 +50,11 @@ const search_booked_flight = async (req, res, next) => {
 
     console.log(req.body);
 
-    let email = req.body.email;
-    let departureDate = req.body.departureDate;
-    let returnDate = req.body.returnDate;
-    let origin = req.body.origin;
-    let destination = req.body.destination;
+    let email = req.body.email.trim();
+    let departureDate = req.body.departureDate.trim();
+    let returnDate = req.body.returnDate.trim();
+    let origin = req.body.origin.trim();
+    let destination = req.body.destination.trim();
 
     console.log("email", email);
     console.log("departureDate", departureDate);
@@ -64,76 +64,117 @@ const search_booked_flight = async (req, res, next) => {
 
     let bookings;
 
-    if(email !== '' && departureDate === '' && returnDate === '' && origin === '' && destination === ''){
+    if(
+        email
+        && !departureDate 
+        && !returnDate
+        && !origin
+        && !destination
+    ){
         
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.travelers.contact.emailAddress": email
+            type: "Flight",
+            "travellers.email": email
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
 
-    }else if(email === '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
+    }else if(
+        departureDate
+        && !email
+        && !returnDate 
+        && !origin
+        && !destination
+    ){
         
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
+            type: "Flight",
+            departure_date: {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
 
-    }else if(email === '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
+    }else if(
+        origin 
+        && !email
+        && !departureDate 
+        && !returnDate
+        && !destination
+    ){
         
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
+            type: "Flight",
+            takeoff_airport_code: origin,
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
         
-    }else if(email === '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
+    }else if(
+        destination
+        && !email
+        && !departureDate
+        && !returnDate
+        && !origin 
+    ){
 
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
+            type: "Flight",
+            destination_airport_code: destination,
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
         
-    }else if(email !== '' && departureDate !== '' && returnDate === '' && origin === '' && destination === ''){
+    }else if(
+        email
+        && departureDate 
+        && !returnDate 
+        && !origin
+        && !destination){
         
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.travelers.contact.emailAddress": email,
-            "booking_data.data.flightOffers.itineraries.segments.departure.at": {"$regex": departureDate, "$options": "i"},
+            type: "Flight",
+            "travellers.email": email,
+            departure_date: {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
         
-    }else if(email !== '' && departureDate === '' && returnDate === '' && origin !== '' && destination === ''){
+    }else if(
+        email 
+        && origin
+        && !departureDate 
+        && !returnDate
+        && !destination
+    ){
 
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.travelers.contact.emailAddress": email,
-            "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
+            type: "Flight",
+            "travellers.email": email,
+            takeoff_airport_code: origin,
         }).catch(err => {
             console.log(err);
             res.send([]);
         });
         
-    }else if(email !== '' && departureDate === '' && returnDate === '' && origin === '' && destination !== ''){
+    }else if(
+        email 
+        && destination
+        && !departureDate 
+        && !returnDate
+        && !origin
+    ){
 
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.travelers.contact.emailAddress": email,
-            "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
+            type: "Flight",
+            "travellers.email": email,
+            destination_airport_code: destination,
         }).catch(err => {
             console.log(err);
             res.send([]);
@@ -142,11 +183,11 @@ const search_booked_flight = async (req, res, next) => {
     }else{
 
         bookings = await BookingHistory.find({
-            booking_type: "flight",
-            "booking_data.data.travelers.contact.emailAddress": email,
-            "booking_data.data.flightOffers.itineraries.segments.departure.iataCode": origin,
-            "booking_data.data.flightOffers.itineraries.segments.arrival.iataCode": destination,
-            "booking_data.data.flightOffers.itineraries.segments.departure.at": departureDate,
+            type: "Flight",
+            "travellers.email": email,
+            takeoff_airport_code: origin,
+            destination_airport_code: destination,
+            departure_date: departureDate,
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
         }).catch(err => {
             console.log(err);
