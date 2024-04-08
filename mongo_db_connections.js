@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 // schemas
 const bookingHistorySchema = require("./models/bookingHistory");
+const bookingIntentLogSchema = require("./models/bookingIntentLog");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -22,11 +23,13 @@ let welldugo_oc_conn = mongoose.createConnection(welldugo_oc_url, {useNewUrlPars
 
 // welldugo models
 const BookingHistory = welldugo_conn.model('BookingHistory', bookingHistorySchema);
+const BookingIntentLog = welldugo_conn.model('BookingIntentLog', bookingIntentLogSchema)
 
 //welldugo oc models
 // will go here
 
 module.exports = {
     BookingHistory,
+    BookingIntentLog,
 }
 

@@ -26,4 +26,4 @@ const bookingIntentLogSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('BookingIntentLog', bookingIntentLogSchema);
+module.exports = bookingIntentLogSchema;

@@ -1,6 +1,7 @@
 //models
 const {
-    BookingHistory
+    BookingHistory,
+    BookingIntentLog
 } = require("../mongo_db_connections");
 
 const get_recent_bookings = async (req, res, next) => {
@@ -28,7 +29,7 @@ const get_recent_bookings = async (req, res, next) => {
 const get_booking_by_reference_number = async (req, res, next)=>{
     
     let reference = req.params.reference;
-    console.log(reference);
+    //console.log(reference);
 
     let booking = await BookingHistory.find({
         "originPayloads.booking_reference": reference
@@ -223,10 +224,25 @@ const search_booked_hotel = async (req, res, next) => {
 
 }
 
+const get_booking_intent = async (req, res, next) => {
+    let booking_order_id = req.params.order_id;
+
+    let booking_intent = await BookingIntentLog.findOne({
+        "booking_order.id": booking_order_id
+    }).catch(err => {
+        console.log(err);
+        res.send({});
+    });
+
+    res.send(booking_intent);  
+    
+}
+
 module.exports = {
     get_recent_bookings,
     get_booking_by_reference_number,
     get_booking_by_id,
     search_booked_flight,
-    search_booked_hotel
+    search_booked_hotel,
+    get_booking_intent,
 }
