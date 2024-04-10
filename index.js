@@ -25,7 +25,7 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/sessions", require("./routes/sessionRoutes"));
 
 // fallback routes
-app.use("/", (req, res, next)=>{res.send("Server Works")});
+app.use("/", (req, res, next)=>{res.send("Welldugo-OC Server Works")});
 
 const PORT = process.env.PORT || 4000;
 
