@@ -11,7 +11,8 @@ app.use(function(req, res, next) {
 
 // Use Cors
 app.use(cors({
-    origin: '*'
+    origin: '*',
+    exposedHeaders: ['Content-Length', 'Pagination-Total-Items'],
 }));
 
 // For parsing application/json 

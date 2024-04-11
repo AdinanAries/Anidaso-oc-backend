@@ -13,15 +13,18 @@ const get_recent_bookings = async (req, res, next) => {
     console.log(offset);
     console.log(limit);
 
-    //add some code here
+    let total_items = await BookingHistory.count({}).catch(err => {
+        console.log(err);
+        res.send([]);
+    });
+
+    res.set("Pagination-Total-Items", total_items);
+
     let bookings = await BookingHistory.find({}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
         console.log(err);
         res.send([]);
     });
-    //let hotel_bookings = await booked_flight_data.find({});
-    //let recent_bookings = [...flight_bookings, ...hotel_bookings];
     
-    //res.send({booking: ["one", "two", "three"]})
     res.send(bookings);
 
 }
