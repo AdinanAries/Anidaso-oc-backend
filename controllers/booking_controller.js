@@ -234,6 +234,30 @@ const search_booked_flight = async (req, res, next) => {
             res.send([]);
         });
         
+    }else if(
+        origin
+        && destination
+        && !departureDate 
+        && !returnDate
+        && !email
+    ){
+        total_items = await BookingHistory.count({
+            type: "Flight",
+            takeoff_airport_code: origin,
+            destination_airport_code: destination,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            takeoff_airport_code: origin,
+            destination_airport_code: destination,
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
     }else{
         total_items = await BookingHistory.count({
             type: "Flight",
