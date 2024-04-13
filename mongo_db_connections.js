@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bookingHistorySchema = require("./models/bookingHistory");
 const bookingIntentLogSchema = require("./models/bookingIntentLog");
 const userSchema = require("./models/user");
+const failedBookingLogSchema = require("./models/failedBookingLog");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -24,7 +25,8 @@ let welldugo_oc_conn = mongoose.createConnection(welldugo_oc_url, {useNewUrlPars
 
 // welldugo models
 const BookingHistory = welldugo_conn.model('BookingHistory', bookingHistorySchema);
-const BookingIntentLog = welldugo_conn.model('BookingIntentLog', bookingIntentLogSchema)
+const BookingIntentLog = welldugo_conn.model('BookingIntentLog', bookingIntentLogSchema);
+const FailedBookingLog = welldugo_conn.model('FailedBookingLog', failedBookingLogSchema)
 
 //welldugo oc models
 const User = welldugo_oc_conn.model('User', userSchema);
@@ -33,5 +35,6 @@ module.exports = {
     BookingHistory,
     BookingIntentLog,
     User,
+    FailedBookingLog,
 }
 

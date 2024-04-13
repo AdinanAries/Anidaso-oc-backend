@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/bookings", require("./routes/booking_routes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/sessions", require("./routes/sessionRoutes"));
+app.use("/api/analytics", require("./routes/analytics_routes"));
 
 // fallback routes
 app.use("/", (req, res, next)=>{res.send("Welldugo-OC Server Works")});

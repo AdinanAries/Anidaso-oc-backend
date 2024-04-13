@@ -26,4 +26,4 @@ const failedBookingLogSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('FailedBookingLog', failedBookingLogSchema);
+module.exports = failedBookingLogSchema;
