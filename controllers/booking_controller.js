@@ -10,9 +10,6 @@ const get_recent_bookings = async (req, res, next) => {
     --offset; //offset starts from 0 as of array indexes
     let limit = parseInt(req.params.limit);
 
-    console.log(offset);
-    console.log(limit);
-
     let total_items = await BookingHistory.count({}).catch(err => {
         console.log(err);
         res.send([]);
@@ -52,7 +49,9 @@ const get_booking_by_id = async (req, res, next) => {
 
 const search_booked_flight = async (req, res, next) => {
 
-    console.log(req.body);
+    let offset = parseInt(req.params.offset);
+    --offset; //offset starts from 0 as of array indexes
+    let limit = parseInt(req.params.limit);
 
     let email = req.body.email.trim();
     let departureDate = req.body.departureDate.trim();
@@ -60,11 +59,7 @@ const search_booked_flight = async (req, res, next) => {
     let origin = req.body.origin.trim();
     let destination = req.body.destination.trim();
 
-    console.log("email", email);
-    console.log("departureDate", departureDate);
-    console.log("returnDate", returnDate);
-    console.log("origin", origin);
-    console.log("destination", destination);
+    let total_items = 0;
 
     let bookings;
 
@@ -75,11 +70,18 @@ const search_booked_flight = async (req, res, next) => {
         && !origin
         && !destination
     ){
-        
-        bookings = await BookingHistory.find({
+        total_items = await BookingHistory.count({
             type: "Flight",
             "travellers.email": email
         }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            "travellers.email": email
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -91,12 +93,20 @@ const search_booked_flight = async (req, res, next) => {
         && !origin
         && !destination
     ){
-        
-        bookings = await BookingHistory.find({
+        total_items = await BookingHistory.count({
             type: "Flight",
             departure_date: {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
         }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            departure_date: {"$regex": departureDate, "$options": "i"},
+            //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -108,11 +118,18 @@ const search_booked_flight = async (req, res, next) => {
         && !returnDate
         && !destination
     ){
-        
-        bookings = await BookingHistory.find({
+        total_items = await BookingHistory.count({
             type: "Flight",
             takeoff_airport_code: origin,
         }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            takeoff_airport_code: origin,
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -124,11 +141,18 @@ const search_booked_flight = async (req, res, next) => {
         && !returnDate
         && !origin 
     ){
+        total_items = await BookingHistory.count({
+            type: "Flight",
+            destination_airport_code: destination,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
 
         bookings = await BookingHistory.find({
             type: "Flight",
             destination_airport_code: destination,
-        }).catch(err => {
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -138,14 +162,24 @@ const search_booked_flight = async (req, res, next) => {
         && departureDate 
         && !returnDate 
         && !origin
-        && !destination){
-        
-        bookings = await BookingHistory.find({
+        && !destination
+    ){
+        total_items = await BookingHistory.count({
             type: "Flight",
             "travellers.email": email,
             departure_date: {"$regex": departureDate, "$options": "i"},
             //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
         }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            "travellers.email": email,
+            departure_date: {"$regex": departureDate, "$options": "i"},
+            //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -157,12 +191,20 @@ const search_booked_flight = async (req, res, next) => {
         && !returnDate
         && !destination
     ){
+        total_items = await BookingHistory.count({
+            type: "Flight",
+            "travellers.email": email,
+            takeoff_airport_code: origin,
+        }).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
 
         bookings = await BookingHistory.find({
             type: "Flight",
             "travellers.email": email,
             takeoff_airport_code: origin,
-        }).catch(err => {
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -174,8 +216,7 @@ const search_booked_flight = async (req, res, next) => {
         && !returnDate
         && !origin
     ){
-
-        bookings = await BookingHistory.find({
+        total_items = await BookingHistory.count({
             type: "Flight",
             "travellers.email": email,
             destination_airport_code: destination,
@@ -183,10 +224,18 @@ const search_booked_flight = async (req, res, next) => {
             console.log(err);
             res.send([]);
         });
-        
-    }else{
 
         bookings = await BookingHistory.find({
+            type: "Flight",
+            "travellers.email": email,
+            destination_airport_code: destination,
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+        
+    }else{
+        total_items = await BookingHistory.count({
             type: "Flight",
             "travellers.email": email,
             takeoff_airport_code: origin,
@@ -198,7 +247,21 @@ const search_booked_flight = async (req, res, next) => {
             res.send([]);
         });
 
+        bookings = await BookingHistory.find({
+            type: "Flight",
+            "travellers.email": email,
+            takeoff_airport_code: origin,
+            destination_airport_code: destination,
+            departure_date: departureDate,
+            //"booking_data.data.flightOffers.itineraries.segments.departure.at": returnDate
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+
     }
+
+    res.set("Pagination-Total-Items", total_items);
 
     res.send(bookings);
 
