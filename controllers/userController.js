@@ -92,7 +92,7 @@ const login = asyncHandler(async (req, res, next) => {
 
         if(!email || !password){
             res.status(400);
-            res.send({message: "Please provide user credentials"});
+            res.send({isError: true, message: "Please provide user credentials"});
         }
 
         const user = await User.findOne({email});
@@ -110,12 +110,12 @@ const login = asyncHandler(async (req, res, next) => {
             });
         }else{
             res.status(400);
-            res.send({message: "Invalid Login Credentials"});
+            res.send({isError: true, message: "Invalid Login Credentials"});
         }
     }catch(e){
         console.log(e);
         res.status(500);
-        res.send({message: "Server error"});
+        res.send({isError: true, message: "Server error"});
         //throw new Error("Server error");
     }
 })
