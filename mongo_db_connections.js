@@ -11,6 +11,10 @@ const failedBookingLogSchema = require("./models/failedBookingLog");
 const welldugo_db_url = process.env.WELLDUGO_DB_URL;
 const welldugo_oc_url = process.env.WELLDUGO_OC_DB_URL;
 
+// Test DBs
+//const welldugo_db_url = process.env.WELLDUGO_TEST_DB_URL;
+//const welldugo_oc_url = process.env.WELLDUGO_OC_TEST_DB_URL;
+
 // mongo connections
 let welldugo_conn = mongoose.createConnection(welldugo_db_url, {useNewUrlParser: true, useUnifiedTopology: true}, ()=>{
     console.log("connected to welldugo database successfully")
@@ -36,5 +40,10 @@ module.exports = {
     BookingIntentLog,
     User,
     FailedBookingLog,
+    // DB params
+    DbEnvs: {
+        customer: welldugo_db_url,
+        oc: welldugo_oc_url
+    }
 }
 

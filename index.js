@@ -3,6 +3,8 @@ const app = express();
 const cors = require('cors');
 require("dotenv").config();
 
+const { DbEnvs } = require("./mongo_db_connections");
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -26,8 +28,29 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/sessions", require("./routes/sessionRoutes"));
 app.use("/api/analytics", require("./routes/analytics_routes"));
 
+// Local Utilities
+const check_is_cust_prod_db = () => {
+    if (DbEnvs.customer === process.env.WELLDUGO_DB_URL)
+        return true
+    else
+        return false
+}
+
+const check_is_oc_prod_db = () => {
+    if (DbEnvs.oc === process.env.WELLDUGO_OC_DB_URL)
+        return true
+    else
+        return false
+}
+
 // fallback routes
-app.use("/", (req, res, next)=>{res.send("Welldugo-OC Server Works")});
+app.use("/", (req, res, next)=>{
+    res.send({
+        isCustProDB: check_is_cust_prod_db(),
+        isOCProDB: check_is_oc_prod_db(),
+        message: "Welldugo-OC Server Works!!!"
+    });
+});
 
 const PORT = process.env.PORT || 4000;
 
