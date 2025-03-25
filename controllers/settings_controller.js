@@ -23,13 +23,13 @@ const addOcServerSettings = async (req, res, next) => {
             res.send({message: "Both the settings property and associated value are required!"});
         }
 
-        // Check if user exists
+        // Check if settings exists
         const settingsExists = await OcServerSettings.findOne({property});
 
         if(settingsExists) {
-            res.status(400);
-            res.send({message: "This server-settings already exists"});
-            return;
+            await OcServerSettings.updateOne({property}, {value});
+            res.send({message: "Server-settings has been modified"});
+            return
         }
 
         // Create new server settings
@@ -75,12 +75,13 @@ const addCustAppServerSettings = async (req, res, next) => {
             res.send({message: "Both the settings property and associated value are required!"});
         }
 
-        // Check if user exists
+        // Check if settings exists
         const settingsExists = await CustAppServerSettings.findOne({property});
 
         if(settingsExists) {
-            res.status(400);
-            res.send({message: "This server-settings already exists"});
+            res.status(201);
+            await CustAppServerSettings.updateOne({property}, {value});
+            res.send({message: "Server-settings has been modified exists"});
             return;
         }
 
