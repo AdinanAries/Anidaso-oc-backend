@@ -3,7 +3,11 @@ const app = express();
 const cors = require('cors');
 require("dotenv").config();
 
-const { DbEnvs } = require("./mongo_db_connections");
+const { 
+    DbEnvs,
+    CustAppServerSettings,
+    OcServerSettings
+} = require("./mongo_db_connections");
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -45,8 +49,16 @@ const check_is_oc_prod_db = () => {
 }
 
 // fallback routes
-app.use("/", (req, res, next)=>{
+app.use("/", async (req, res, next)=>{
+    let ocSettings = await OcServerSettings.find({}).catch(err => {
+        console.log(err);
+    });
+    let custAppSettings = await CustAppServerSettings.find({}).catch(err => {
+        console.log(err);
+    });
     res.send({
+        ocSettings: ocSettings,
+        custAppSettings: custAppSettings,
         isCustProDB: check_is_cust_prod_db(),
         isOCProDB: check_is_oc_prod_db(),
         message: "Welldugo-OC Server Works!!!"
