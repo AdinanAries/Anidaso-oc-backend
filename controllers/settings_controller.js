@@ -81,7 +81,7 @@ const addCustAppServerSettings = async (req, res, next) => {
         if(settingsExists) {
             res.status(201);
             await CustAppServerSettings.updateOne({property}, {value});
-            res.send({message: "Server-settings has been modified exists"});
+            res.send({message: "Server-settings has been modified"});
             return;
         }
 
