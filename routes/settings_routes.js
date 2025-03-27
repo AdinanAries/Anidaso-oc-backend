@@ -14,9 +14,9 @@ const {
 
 // routes
 router.post("/create/", protect, addOcServerSettings);
-router.get("/", protect, get_oc_server_settings);
+router.get("/:property", protect, get_oc_server_settings);
 router.post("/customer-app/create/", protect, addCustAppServerSettings);
-router.get("/customer-app/", protect, get_cust_app_server_settings);
+router.get("/customer-app/:property", protect, get_cust_app_server_settings);
 
 
 module.exports = router;

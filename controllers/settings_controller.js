@@ -110,20 +110,29 @@ const addCustAppServerSettings = async (req, res, next) => {
 };
 
 /**
- * @desc Get all customer app server settings
+ * @desc Get all OC server settings
  * @param {Object} req 
  * @param {Object} res 
  * @param {Function} next 
  * @access Protected
  */
 const get_oc_server_settings = async (req, res, next) => {
-
-    let settings = await OcServerSettings.find({}).catch(err => {
-        console.log(err);
-        res.send([]);
-    });
-    
-    res.send(settings);
+    try {
+        let find_obj = {};
+        let prop = req.params?.property;
+        if(prop)
+            find_obj.property = prop;
+        let settings = await OcServerSettings.find(find_obj).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+        
+        res.send(settings);
+    } catch (e) {
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
 
 }
 
@@ -135,13 +144,22 @@ const get_oc_server_settings = async (req, res, next) => {
  * @access Protected
  */
 const get_cust_app_server_settings = async (req, res, next) => {
-
-    let settings = await CustAppServerSettings.find({}).catch(err => {
-        console.log(err);
-        res.send([]);
-    });
-    
-    res.send(settings);
+    try {
+        let find_obj = {};
+        let prop = req.params?.property;
+        if(prop)
+            find_obj.property = prop;
+        let settings = await CustAppServerSettings.find(find_obj).catch(err => {
+            console.log(err);
+            res.send([]);
+        });
+        
+        res.send(settings);
+    } catch (e) {
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
 
 }
 
