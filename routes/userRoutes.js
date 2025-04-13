@@ -7,6 +7,7 @@ const { protect } = require("../middlewares/authMiddleware");
 // Controllers
 const { 
     getUserDetails,
+    getUserDetailsByID,
     getAgentInfo,
     login, 
     signup, 
@@ -15,6 +16,7 @@ const {
 } = require("../controllers/userController");
 
 router.get("/me/", protect, getUserDetails);
+router.get("/:id", protect, getUserDetailsByID);
 router.get("/agent/:user_id", protect, getAgentInfo);
 router.post("/login/", login);
 router.post("/register/", signup);

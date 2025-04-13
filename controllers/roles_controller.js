@@ -44,6 +44,25 @@ const getCanActions = (req, res, next) => {
 }
 
 /**
+ * @desc Get Role By Constant
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getUserRoleByConstant = (req, res, next) => {
+    let c = req?.params?.role_constant;
+    UserRole.findOne({constant: c})
+    .then((role) => {
+        res.status(200).send(role);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
  * @desc Get All Application Pages
  * @param {Object} req 
  * @param {Object} res 
@@ -117,6 +136,7 @@ const getAppResourceType = (req, res, next) => {
 
 module.exports = {
     getUserRoles,
+    getUserRoleByConstant,
     getRolePrivilege,
     getAppPages,
     getAppResources,

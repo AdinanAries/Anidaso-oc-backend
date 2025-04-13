@@ -66,6 +66,7 @@ const signup = asyncHandler(async (req, res, next) => {
                 dob: result.dob,
                 phone: result.phone,
                 email: result.email,
+                gender: result.gender,
                 password: result.password,
                 token: generateToken(result._id)
             });
@@ -100,8 +101,9 @@ const login = asyncHandler(async (req, res, next) => {
         const user = await User.findOne({email});
         if(user && (await bcrypt.compare(password, user.password))){
             // Getting User Role
+            let role_info={}
             if(user?.role_id){
-                user.role_info = await UserRole.findOne({_id: user?.role_id});
+                role_info = await UserRole.findOne({_id: user?.role_id});
             }
 
             res.status(201).send({
@@ -112,9 +114,10 @@ const login = asyncHandler(async (req, res, next) => {
                 dob: user.dob,
                 phone: user.phone,
                 email: user.email,
+                gender: user.gender,
                 password: user.password,
                 role_id: user?.role_id,
-                role_info: user?.role_info,
+                role_info: role_info,
                 token: generateToken(user._id)
             });
         }else{
@@ -130,7 +133,7 @@ const login = asyncHandler(async (req, res, next) => {
 })
 
 /**
- * @desc Get currently logged-in user information from MongoDB
+ * @desc Get Currently Logged-In User Information
  * @param {Object} req 
  * @param {Object} res 
  * @param {Function} next
@@ -139,13 +142,72 @@ const login = asyncHandler(async (req, res, next) => {
 const getUserDetails = (req, res, next) => {
     const id=req.user.id;
     User.findOne({_id: id})
-    .then((user) => {
-        res.status(200).send(user);
+    .then(async(user) => {
+        // Getting User Role
+        let role_info={}
+        if(user?.role_id){
+            role_info = await UserRole.findOne({_id: user?.role_id});
+        }
+
+        res.status(200).send({
+            _id: user._id,
+            first_name: user.first_name,
+            middle_name: user.middle_name,
+            last_name: user.last_name,
+            dob: user.dob,
+            phone: user.phone,
+            email: user.email,
+            password: user.password,
+            role_id: user?.role_id,
+            role_info: role_info,
+            token: generateToken(user._id)
+        });
     })
     .catch((err) => {
         console.log(err);
         res.status(500).send({message: "Server Error"});
     }); 
+}
+
+/**
+ * @desc Get User By ID
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getUserDetailsByID = (req, res, next) => {
+    try{
+        const id=req.params.id;
+        User.findOne({_id: id}).then(async(user) => {
+            // Getting User Role
+            let role_info={}
+            if(user?.role_id){
+                role_info = await UserRole.findOne({_id: user?.role_id});
+            }
+
+            res.status(200).send({
+                _id: user._id,
+                first_name: user.first_name,
+                middle_name: user.middle_name,
+                last_name: user.last_name,
+                dob: user.dob,
+                phone: user.phone,
+                email: user.email,
+                gender: user.gender,
+                password: user.password,
+                role_id: user?.role_id,
+                role_info: role_info,
+                token: generateToken(user._id)
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).send({message: "Server Error"});
+        }); 
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
 }
 
 /**
@@ -184,12 +246,13 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
             dob,
             gender,
             phone,
-            email
+            email,
+            role_id
         } = req.body;
 
         console.log(req.body);
 
-        if(!first_name || !last_name || !email ){
+        if(!first_name || !last_name || !email || !role_id || !gender){
             res.status(400);
             res.send({message: 'Please add mandatory user fields'});
         }
@@ -210,6 +273,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
         user.gender=gender;
         user.phone=phone;
         user.email=email;
+        user.role_id=role_id;
         user.password=password;
 
         const user_updated = new User(user);
@@ -223,6 +287,8 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
                 dob: result.dob,
                 phone: result.phone,
                 email: result.email,
+                gender: result.gender,
+                role_id: result.role_id,
                 password: result.password,
             });
         }).catch((err) => {
@@ -329,6 +395,7 @@ const generateToken = (id) => {
 
 module.exports = {
     getUserDetails,
+    getUserDetailsByID,
     getAgentInfo,
     login,
     signup,
