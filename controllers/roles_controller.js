@@ -1,0 +1,125 @@
+const {
+    UserRole,
+    RolePrivilege,
+    ApplicationPage,
+    ApplicationResource,
+    ApplicationResourceType,
+    CanAction,
+} = require('../mongo_db_connections'); 
+
+/**
+ * @desc Get All User Roles
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getUserRoles = (req, res, next) => {
+    UserRole.find({})
+    .then((roles) => {
+        res.status(200).send(roles);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get All Role Privilege Actions
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getCanActions = (req, res, next) => {
+    CanAction.find({})
+    .then((can_actions) => {
+        res.status(200).send(can_actions);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get All Application Pages
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getAppPages = (req, res, next) => {
+    ApplicationPage.find({})
+    .then((pages) => {
+        res.status(200).send(pages);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get All Application Resources
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getAppResources = (req, res, next) => {
+    ApplicationResource.find({})
+    .then((resources) => {
+        res.status(200).send(resources);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get Role Privilege by ID
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getRolePrivilege = (req, res, next) => {
+    RolePrivilege.findOne({_id: req?.params?.id})
+    .then((privilege) => {
+        res.status(200).send(privilege);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get Application Resource Type by ID
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getAppResourceType = (req, res, next) => {
+    ApplicationResourceType.findOne({_id: req?.params?.id})
+    .then((app_resource_type) => {
+        res.status(200).send(app_resource_type);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+module.exports = {
+    getUserRoles,
+    getRolePrivilege,
+    getAppPages,
+    getAppResources,
+    getAppResourceType,
+    getCanActions,
+}

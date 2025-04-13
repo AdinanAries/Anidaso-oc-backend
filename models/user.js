@@ -36,6 +36,10 @@ const userSchema = new Schema({
         type: String,
         required: [true, "Please add password"]
     },
+    role_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserRole' 
+    },
     imageUrl: {
     type: String,
     required: false

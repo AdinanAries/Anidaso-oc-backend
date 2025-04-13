@@ -7,6 +7,13 @@ const userSchema = require("./models/user");
 const ocServerSettingsSchema = require("./models/ocServerSettings");
 const failedBookingLogSchema = require("./models/failedBookingLog");
 const custAppServerSettingsSchema = require("./models/custAppServerSettings");
+const agentInfoSchema = require("./models/agentInfo");
+const applicationPageSchema = require("./models/applicationPage");
+const rolePrivilegeSchema = require("./models/rolePrivilege");
+const applicationResourceSchema = require("./models/applicationResource");
+const applicationResourceTypeSchema = require("./models/applicationResourceType");
+const canActionSchema = require("./models/canAction");
+const userRoleSchema = require("./models/userRole");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -38,6 +45,13 @@ const CustAppServerSettings = welldugo_conn.model('CustAppServerSettings', custA
 //welldugo oc models
 const User = welldugo_oc_conn.model('User', userSchema);
 const OcServerSettings = welldugo_oc_conn.model("OcServerSettings", ocServerSettingsSchema);
+const AgentInfo = welldugo_oc_conn.model('AgentInfo', agentInfoSchema);
+const ApplicationPage = welldugo_oc_conn.model('ApplicationPage', applicationPageSchema);
+const RolePrivilege = welldugo_oc_conn.model('RolePrivilege', rolePrivilegeSchema);
+const ApplicationResource = welldugo_oc_conn.model('ApplicationResource', applicationResourceSchema);
+const ApplicationResourceType = welldugo_oc_conn.model('ApplicationResourceType', applicationResourceTypeSchema);
+const CanAction = welldugo_oc_conn.model('CanAction', canActionSchema);
+const UserRole = welldugo_oc_conn.model('UserRole', userRoleSchema);
 
 module.exports = {
     BookingHistory,
@@ -46,6 +60,13 @@ module.exports = {
     FailedBookingLog,
     CustAppServerSettings,
     OcServerSettings,
+    AgentInfo,
+    ApplicationPage,
+    RolePrivilege,
+    ApplicationResource,
+    ApplicationResourceType,
+    CanAction,
+    UserRole,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,

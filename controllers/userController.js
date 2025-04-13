@@ -1,5 +1,7 @@
 const {
-    User
+    User,
+    AgentInfo,
+    UserRole
 } = require('../mongo_db_connections'); 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -97,6 +99,11 @@ const login = asyncHandler(async (req, res, next) => {
 
         const user = await User.findOne({email});
         if(user && (await bcrypt.compare(password, user.password))){
+            // Getting User Role
+            if(user?.role_id){
+                user.role_info = await UserRole.findOne({_id: user?.role_id});
+            }
+
             res.status(201).send({
                 _id: user._id,
                 first_name: user.first_name,
@@ -106,6 +113,8 @@ const login = asyncHandler(async (req, res, next) => {
                 phone: user.phone,
                 email: user.email,
                 password: user.password,
+                role_id: user?.role_id,
+                role_info: user?.role_info,
                 token: generateToken(user._id)
             });
         }else{
@@ -132,6 +141,25 @@ const getUserDetails = (req, res, next) => {
     User.findOne({_id: id})
     .then((user) => {
         res.status(200).send(user);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }); 
+}
+
+/**
+ * @desc Get Agent User information, if user has role of Agent
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getAgentInfo = (req, res, next) => {
+    const user_id=req.user.user_id;
+    AgentInfo.findOne({_id: user_id})
+    .then((agent_info) => {
+        res.status(200).send(agent_info);
     })
     .catch((err) => {
         console.log(err);
@@ -301,6 +329,7 @@ const generateToken = (id) => {
 
 module.exports = {
     getUserDetails,
+    getAgentInfo,
     login,
     signup,
     updateUserDetails,

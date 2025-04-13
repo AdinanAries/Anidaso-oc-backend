@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 const SchemaTypes = mongoose.SchemaTypes;
 
 const bookingHistorySchema = new Schema({
+    agentID: {
+        type: String,
+        required: false,
+    },
     apiProvider: {
         type: String,
         required: true
@@ -20,7 +24,7 @@ const bookingHistorySchema = new Schema({
         type: String,
         required: true
     },
-    user_id: {
+    user_id: { // User who booked the flight, Not OC Agent
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
