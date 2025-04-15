@@ -54,7 +54,8 @@ const signup = asyncHandler(async (req, res, next) => {
             gender: gender,
             phone: phone,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            make_new_password: true
         });
         user.save().then((result) => {
             console.log(result);
@@ -68,6 +69,7 @@ const signup = asyncHandler(async (req, res, next) => {
                 email: result.email,
                 gender: result.gender,
                 password: result.password,
+                make_new_password: result.make_new_password,
                 token: generateToken(result._id)
             });
         }).catch((err) => {
@@ -116,6 +118,7 @@ const login = asyncHandler(async (req, res, next) => {
                 email: user.email,
                 gender: user.gender,
                 password: user.password,
+                make_new_password: user.make_new_password,
                 role_id: user?.role_id,
                 role_info: role_info,
                 token: generateToken(user._id)
@@ -158,6 +161,7 @@ const getUserDetails = (req, res, next) => {
             phone: user.phone,
             email: user.email,
             password: user.password,
+            make_new_password: user.make_new_password,
             role_id: user?.role_id,
             role_info: role_info,
             token: generateToken(user._id)
@@ -197,6 +201,7 @@ const getUserDetailsByID = (req, res, next) => {
                 gender: user.gender,
                 password: user.password,
                 role_id: user?.role_id,
+                make_new_password: user?.make_new_password,
                 role_info: role_info,
                 token: generateToken(user._id)
             });
@@ -247,14 +252,14 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
             gender,
             phone,
             email,
-            role_id
+            role_id,
+            make_new_password,
         } = req.body;
-
-        console.log(req.body);
 
         if(!first_name || !last_name || !email || !role_id || !gender){
             res.status(400);
             res.send({message: 'Please add mandatory user fields'});
+            return;
         }
 
         // Check if user exists
@@ -263,6 +268,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
         if(!user) {
             res.status(400);
             res.send({message: 'User does not exist'});
+            return;
         }
 
         // Update user
@@ -275,6 +281,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
         user.email=email;
         user.role_id=role_id;
         user.password=password;
+        user.make_new_password=make_new_password;
 
         const user_updated = new User(user);
         user_updated.save().then((result) => {
@@ -289,6 +296,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
                 email: result.email,
                 gender: result.gender,
                 role_id: result.role_id,
+                make_new_password: result.make_new_password,
                 password: result.password,
             });
         }).catch((err) => {
@@ -324,19 +332,18 @@ const updateUserPassword = asyncHandler( async (req, res, next) => {
             email
         } = req.body;
 
+        console.log("here", req.body);
+
         if(!new_password || !old_password){
             res.status(400);
             res.send({message: "Either your old password or the new one or both are have not been provided"});
-        }
-
-        if(new_password===old_password){
-            res.status(400);
-            res.send({message: "Both old and new passwords are the same"});
+            return;
         }
 
         if(!first_name || !last_name || !email ){
             res.status(400);
             res.send({message: 'Please add mandatory user fields'});
+            return;
         }
 
         // Check if user exists
@@ -345,13 +352,20 @@ const updateUserPassword = asyncHandler( async (req, res, next) => {
         if(!user) {
             res.status(400);
             res.send({message: 'User does not exist'});
+            return;
         }
 
         if((await bcrypt.compare(old_password, user.password))){
             // old password is correct!
+            if((await bcrypt.compare(new_password, user.password))){
+                res.status(400);
+                res.send({message: "Both old and new passwords are the same"});
+                return;
+            }
         } else {
             res.status(400);
             res.send({message: 'Please make sure your old password is correct'});
+            return;
         }
 
         // Hash new password
@@ -360,6 +374,7 @@ const updateUserPassword = asyncHandler( async (req, res, next) => {
 
         // Update user password
         user.password=hashedPassword;
+        user.make_new_password=false;
 
         const user_updated = new User(user);
         user_updated.save().then((result) => {
@@ -372,6 +387,8 @@ const updateUserPassword = asyncHandler( async (req, res, next) => {
                 dob: result.dob,
                 phone: result.phone,
                 email: result.email,
+                role_id: result.role_id,
+                make_new_password: result.make_new_password,
                 password: result.password,
             });
         }).catch((err) => {

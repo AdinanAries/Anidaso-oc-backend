@@ -36,6 +36,10 @@ const userSchema = new Schema({
         type: String,
         required: [true, "Please add password"]
     },
+    make_new_password: {
+        type: Boolean,
+        required: [true, "Please add "]
+    },
     role_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserRole' 

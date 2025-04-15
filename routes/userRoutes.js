@@ -11,7 +11,7 @@ const {
     getAgentInfo,
     login, 
     signup, 
-    updateUserDetails, 
+    updateUserDetails,
     updateUserPassword,
 } = require("../controllers/userController");
 
@@ -21,6 +21,6 @@ router.get("/agent/:user_id", protect, getAgentInfo);
 router.post("/login/", login);
 router.post("/register/", signup);
 router.put("/edit/", protect, updateUserDetails);
-router.put("/edit/password", protect, updateUserPassword);
+router.put("/password/edit/", protect, updateUserPassword);
 
 module.exports = router;
