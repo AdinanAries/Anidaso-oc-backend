@@ -13,6 +13,7 @@ const {
     signup, 
     updateUserDetails,
     updateUserPassword,
+    getUsers,
 } = require("../controllers/userController");
 
 router.get("/me/", protect, getUserDetails);
@@ -22,5 +23,6 @@ router.post("/login/", login);
 router.post("/register/", signup);
 router.put("/edit/", protect, updateUserDetails);
 router.put("/password/edit/", protect, updateUserPassword);
+router.get("/all/:offset/:limit", protect, getUsers);
 
 module.exports = router;

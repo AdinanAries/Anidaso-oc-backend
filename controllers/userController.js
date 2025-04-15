@@ -23,11 +23,19 @@ const signup = asyncHandler(async (req, res, next) => {
             last_name,
             dob,
             gender,
+            user_role, // Numeric constant
             phone,
             email
         } = req.body;
 
-        if(!first_name || !last_name || !email || !password || !phone ){
+        if(!first_name || 
+            !last_name || 
+            !email || 
+            !password || 
+            !phone || 
+            !user_role || 
+            !gender || 
+            !dob){
             res.status(400);
             res.send({message: "Please add mandatory user fields"});
         }
@@ -45,6 +53,9 @@ const signup = asyncHandler(async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        // Adding user role id
+        let usr_role = await UserRole.findOne({constant: user_role})
+
         // Create user
         const user = new User({
             first_name: first_name,
@@ -54,6 +65,7 @@ const signup = asyncHandler(async (req, res, next) => {
             gender: gender,
             phone: phone,
             email: email,
+            role_id: usr_role._id,
             password: hashedPassword,
             make_new_password: true
         });
@@ -69,8 +81,10 @@ const signup = asyncHandler(async (req, res, next) => {
                 email: result.email,
                 gender: result.gender,
                 password: result.password,
+                role_id: result.role_id,
+                role_info: usr_role,
                 make_new_password: result.make_new_password,
-                token: generateToken(result._id)
+                //token: generateToken(result._id)
             });
         }).catch((err) => {
             console.log(err);
@@ -83,6 +97,37 @@ const signup = asyncHandler(async (req, res, next) => {
         res.send({message: "Server error"});
     }
 });
+
+const getUsers = async (req, res, next) => {
+
+    try{
+        let offset = parseInt(req.params.offset);
+        --offset; //offset starts from 0 as of array indexes
+        let limit = parseInt(req.params.limit);
+
+        let total_items = await User.count({}).catch(err => {
+            console.log(err);
+            res.send([]);
+            return
+        });
+
+        res.set("Pagination-Total-Items", total_items);
+
+        let users = await User.find({}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+            console.log(err);
+            res.send([]);
+            return
+        });
+        
+        res.send(users);
+    }catch(e){
+        console.log(e);
+        res.status(500);
+        res.send({isError: true, message: "Server error"});
+        //throw new Error("Server error");
+    }
+
+}
 
 /**
  * @desc User login
@@ -418,4 +463,5 @@ module.exports = {
     signup,
     updateUserDetails,
     updateUserPassword,
+    getUsers,
 }
