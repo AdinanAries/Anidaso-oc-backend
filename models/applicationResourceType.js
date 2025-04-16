@@ -14,7 +14,7 @@ const applicationResourceTypeSchema = new Schema({
     },
     constant: { // Constants for matching privilege actions with resources
         type: Number,
-        required: [true, "Please add constant number: 1=>Accounts, 2=>SearchForms, 3=>Analytics, ..."],
+        required: [true, "Please add constant number: 1=>Accounts, 2=>Form, 3=>Analytics, ..."],
         unique: true,
     }
 },

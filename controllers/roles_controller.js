@@ -70,14 +70,20 @@ const getUserRoleByConstant = (req, res, next) => {
  * @access Private
  */
 const getAppPages = (req, res, next) => {
-    ApplicationPage.find({})
-    .then((pages) => {
-        res.status(200).send(pages);
-    })
-    .catch((err) => {
-        console.log(err);
-        res.status(500).send({message: "Server Error"});
-    }); 
+    try {
+        ApplicationPage.find({})
+        .then((pages) => {
+            res.status(200).send(pages);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({message: "Server Error"});
+        }); 
+    }catch(e){
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
 }
 
 /**

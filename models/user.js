@@ -38,7 +38,7 @@ const userSchema = new Schema({
     },
     make_new_password: {
         type: Boolean,
-        required: [true, "Please add "]
+        required: [true, "Please add make_new_password property value"]
     },
     role_id: {
         type: mongoose.Schema.Types.ObjectId,

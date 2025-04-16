@@ -18,7 +18,7 @@ const {
 router.get("/", protect, getUserRoles);
 router.get("/:role_constant", protect, getUserRoleByConstant);
 router.get("/privilege/:id", protect, getRolePrivilege);
-router.get("/app-pages/", protect, getAppPages);
+router.get("/pages/all/", protect, getAppPages);
 router.get("/app-resources/", protect, getAppResources);
 router.get("/resource-type/:id", protect, getAppResourceType);
 router.get("/can-actions/", protect, getCanActions);

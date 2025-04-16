@@ -8,9 +8,10 @@ const userRoleSchema = new Schema({
         type: String,
         required: [true, "Please add role title"]
     },
-    role_privileges: {
-        type: Array,
-        required: [true, "Please add role privilege IDs"]
+    privilege_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RolePrivilege',
+        required: [true, "Please add role privilege ID"]
     },
     constant: {
         type: Number,

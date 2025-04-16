@@ -289,6 +289,7 @@ const getAgentInfo = (req, res, next) => {
 const updateUserDetails = asyncHandler( async (req, res, next) => {
     try{
         const {
+            _id,
             password,
             first_name,
             middle_name,
@@ -301,21 +302,31 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
             make_new_password,
         } = req.body;
 
-        if(!first_name || !last_name || !email || !role_id || !gender){
+        if(
+            !_id ||
+            !first_name || 
+            !last_name || 
+            !email || 
+            !role_id || 
+            !gender || 
+            !phone ||
+            !dob ||
+            (make_new_password==undefined)
+        ){
             res.status(400);
             res.send({message: 'Please add mandatory user fields'});
             return;
         }
 
         // Check if user exists
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(_id);
 
         if(!user) {
             res.status(400);
             res.send({message: 'User does not exist'});
             return;
         }
-
+        
         // Update user
         user.first_name=first_name;
         user.middle_name=middle_name;
@@ -330,7 +341,6 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
 
         const user_updated = new User(user);
         user_updated.save().then((result) => {
-            console.log(result);
             res.status(201).send({
                 _id: result._id,
                 first_name: result.first_name,

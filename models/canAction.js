@@ -10,11 +10,11 @@ const canActionSchema = new Schema({
     },
     action_title: {
         type: String,
-        required: [true, "Please add role description"]
+        required: [true, "Please add action title"]
     },
     description: {
         type: String,
-        required: [true, "Please add role description"]
+        required: [true, "Please add action description"]
     },
     constant: {
         type: Number,
