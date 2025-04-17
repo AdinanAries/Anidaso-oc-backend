@@ -135,6 +135,59 @@ const getRolePrivilege = (req, res, next) => {
 }
 
 /**
+ * @desc Creates New Role Privilege
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const CreateNewPrivilege = async (req, res, next) => {
+    try{
+        const {
+            description,
+            pagesCanAccess,
+            resourcesCanActions,
+        } = req.body;
+
+        if(!description){
+            res.status(400);
+            res.send({message: "Please add privilege description"});
+        }
+        // Check if privilege exists
+        const privExists = await RolePrivilege.findOne({description});
+
+        if(privExists) {
+            res.status(400);
+            res.send({message: "Privilege with same description already exist"});
+            return;
+        }
+
+        // Create privilege
+        const user = new RolePrivilege({
+            description: description,
+            pagesCanAccess: pagesCanAccess,
+            resourcesCanActions: resourcesCanActions,
+        });
+        user.save().then((result) => {
+            console.log(result);
+            res.status(201).send({
+                _id: result._id,
+                description: result.description,
+                pagesCanAccess: result.pagesCanAccess,
+                resourcesCanActions: result.resourcesCanActions
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send({message: 'Privilege could not be created'});
+        });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
+/**
  * @desc Get Application Resource Type by ID
  * @param {Object} req 
  * @param {Object} res 
@@ -160,4 +213,5 @@ module.exports = {
     getAppResources,
     getAppResourceType,
     getCanActionsByResourceType,
+    CreateNewPrivilege,
 }
