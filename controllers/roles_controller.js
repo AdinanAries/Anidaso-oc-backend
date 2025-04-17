@@ -152,6 +152,7 @@ const CreateNewPrivilege = async (req, res, next) => {
         if(!description){
             res.status(400);
             res.send({message: "Please add privilege description"});
+            return;
         }
         // Check if privilege exists
         const privExists = await RolePrivilege.findOne({description});
@@ -169,7 +170,6 @@ const CreateNewPrivilege = async (req, res, next) => {
             resourcesCanActions: resourcesCanActions,
         });
         user.save().then((result) => {
-            console.log(result);
             res.status(201).send({
                 _id: result._id,
                 description: result.description,
@@ -180,6 +180,67 @@ const CreateNewPrivilege = async (req, res, next) => {
             console.log(err);
             res.status(500);
             res.send({message: 'Privilege could not be created'});
+        });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
+/**
+ * @desc Update Existing Role Privilege
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const UpdatePrivilege = async (req, res, next) => {
+    try{
+        const {
+            _id,
+            description,
+            pagesCanAccess,
+            resourcesCanActions,
+        } = req.body;
+
+        if(!_id){
+            res.status(400);
+            res.send({message: "_id field of existing privilege is required"});
+            return;
+        }
+
+        if(!description){
+            res.status(400);
+            res.send({message: "Please add privilege description"});
+            return;
+        }
+
+        // Check if privilege exists
+        const priv = await RolePrivilege.findById(_id);
+
+        if(!priv) {
+            res.status(400);
+            res.send({message: 'Privilege does not exist'});
+            return;
+        }
+        
+        // Update privilege
+        priv.description=description;
+        priv.pagesCanAccess=pagesCanAccess;
+        priv.resourcesCanActions=resourcesCanActions;
+
+        const priv_updated = new RolePrivilege(priv);
+        priv_updated.save().then((result) => {
+        res.status(201).send({
+            _id: result._id,
+            description: result.description,
+            pagesCanAccess: result.pagesCanAccess,
+            resourcesCanActions: result.resourcesCanActions,
+        });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send({message: 'Privilege could not be updated'});
         });
     }catch(err){
         console.log(err);
@@ -214,4 +275,5 @@ module.exports = {
     getAppResourceType,
     getCanActionsByResourceType,
     CreateNewPrivilege,
+    UpdatePrivilege,
 }

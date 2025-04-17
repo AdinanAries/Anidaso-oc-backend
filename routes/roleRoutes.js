@@ -13,7 +13,8 @@ const {
     getAppResources,
     getAppResourceType,
     getCanActionsByResourceType,
-    CreateNewPrivilege
+    CreateNewPrivilege,
+    UpdatePrivilege
 } = require("../controllers/roles_controller");
 
 router.get("/", protect, getUserRoles);
@@ -24,5 +25,6 @@ router.get("/resources/all/", protect, getAppResources);
 router.get("/resource-type/:id", protect, getAppResourceType);
 router.get("/can-actions/:resource_type_id", protect, getCanActionsByResourceType);
 router.post("/privilege/create/", protect, CreateNewPrivilege);
+router.put("/privilege/edit/", protect, UpdatePrivilege)
 
 module.exports = router;
