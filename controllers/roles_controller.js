@@ -32,15 +32,22 @@ const getUserRoles = (req, res, next) => {
  * @param {Function} next
  * @access Private
  */
-const getCanActions = (req, res, next) => {
-    CanAction.find({})
-    .then((can_actions) => {
-        res.status(200).send(can_actions);
-    })
-    .catch((err) => {
+const getCanActionsByResourceType = (req, res, next) => {
+    try{
+        const {
+            resource_type_id
+        } = req.params;
+        CanAction.find({resource_type_id}).then((can_actions) => {
+            res.status(200).send(can_actions);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({message: "Server Error"});
+        }); 
+    }catch(err){
         console.log(err);
         res.status(500).send({message: "Server Error"});
-    }); 
+    }
 }
 
 /**
@@ -94,14 +101,19 @@ const getAppPages = (req, res, next) => {
  * @access Private
  */
 const getAppResources = (req, res, next) => {
-    ApplicationResource.find({})
-    .then((resources) => {
-        res.status(200).send(resources);
-    })
-    .catch((err) => {
+    try{
+        ApplicationResource.find({})
+        .then((resources) => {
+            res.status(200).send(resources);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).send({message: "Server Error"});
+        }); 
+    }catch(err){
         console.log(err);
         res.status(500).send({message: "Server Error"});
-    }); 
+    }
 }
 
 /**
@@ -147,5 +159,5 @@ module.exports = {
     getAppPages,
     getAppResources,
     getAppResourceType,
-    getCanActions,
+    getCanActionsByResourceType,
 }

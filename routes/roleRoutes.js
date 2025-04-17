@@ -12,15 +12,15 @@ const {
     getAppPages,
     getAppResources,
     getAppResourceType,
-    getCanActions
+    getCanActionsByResourceType
 } = require("../controllers/roles_controller");
 
 router.get("/", protect, getUserRoles);
 router.get("/:role_constant", protect, getUserRoleByConstant);
 router.get("/privilege/:id", protect, getRolePrivilege);
 router.get("/pages/all/", protect, getAppPages);
-router.get("/app-resources/", protect, getAppResources);
+router.get("/resources/all/", protect, getAppResources);
 router.get("/resource-type/:id", protect, getAppResourceType);
-router.get("/can-actions/", protect, getCanActions);
+router.get("/can-actions/:resource_type_id", protect, getCanActionsByResourceType);
 
 module.exports = router;
