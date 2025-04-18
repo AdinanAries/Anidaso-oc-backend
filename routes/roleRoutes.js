@@ -14,11 +14,17 @@ const {
     getAppResourceType,
     getCanActionsByResourceType,
     CreateNewPrivilege,
-    UpdatePrivilege
+    CreateNewAppRole,
+    UpdatePrivilege,
+    UpdateAppRole,
+    getAllRolePrivileges,
 } = require("../controllers/roles_controller");
 
 router.get("/", protect, getUserRoles);
+router.post("/create/", protect, CreateNewAppRole);
+router.put("/edit/", protect, UpdateAppRole);
 router.get("/:role_constant", protect, getUserRoleByConstant);
+router.get("/privilege/all/privs/", protect, getAllRolePrivileges);
 router.get("/privilege/:id", protect, getRolePrivilege);
 router.get("/pages/all/", protect, getAppPages);
 router.get("/resources/all/", protect, getAppResources);

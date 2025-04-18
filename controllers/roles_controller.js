@@ -135,6 +135,27 @@ const getRolePrivilege = (req, res, next) => {
 }
 
 /**
+ * @desc Get All Role Privileges
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const getAllRolePrivileges = (req, res, next) => {
+    try{
+        RolePrivilege.find({}).then((privileges) => {
+            res.status(200).send(privileges);
+        }).catch((err) => {
+            console.log(err);
+            res.status(500).send({message: "Server Error"});
+        }); 
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
+/**
  * @desc Creates New Role Privilege
  * @param {Object} req 
  * @param {Object} res 
@@ -164,12 +185,12 @@ const CreateNewPrivilege = async (req, res, next) => {
         }
 
         // Create privilege
-        const user = new RolePrivilege({
+        const privilege = new RolePrivilege({
             description: description,
             pagesCanAccess: pagesCanAccess,
             resourcesCanActions: resourcesCanActions,
         });
-        user.save().then((result) => {
+        privilege.save().then((result) => {
             res.status(201).send({
                 _id: result._id,
                 description: result.description,
@@ -180,6 +201,71 @@ const CreateNewPrivilege = async (req, res, next) => {
             console.log(err);
             res.status(500);
             res.send({message: 'Privilege could not be created'});
+        });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
+/**
+ * @desc Creates New Application Role
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const CreateNewAppRole = async (req, res, next) => {
+    try{
+        const {
+            title,
+            constant,
+            privilege_id,
+        } = req.body;
+
+        if(!title){
+            res.status(400);
+            res.send({message: "Please add role title"});
+            return;
+        }
+
+        if(!constant){
+            res.status(400);
+            res.send({message: "Role constant is required"});
+            return;
+        }
+
+        if(!privilege_id){
+            res.status(400);
+            res.send({message: "privilege_id is required"});
+            return;
+        }
+        // Check if role exists
+        const roleExists = await UserRole.findOne({title});
+
+        if(roleExists) {
+            res.status(400);
+            res.send({message: "Role with same title already exist"});
+            return;
+        }
+
+        // Create role
+        const role = new UserRole({
+            title: title,
+            constant: constant,
+            privilege_id: privilege_id,
+        });
+        role.save().then((result) => {
+            res.status(201).send({
+                _id: result._id,
+                title: result.title,
+                constant: result.constant,
+                privilege_id: result.privilege_id
+            });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send({message: 'Role could not be created'});
         });
     }catch(err){
         console.log(err);
@@ -249,6 +335,79 @@ const UpdatePrivilege = async (req, res, next) => {
 }
 
 /**
+ * @desc Update Existing User Role
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const UpdateAppRole = async (req, res, next) => {
+    try{
+        const {
+            _id,
+            title,
+            constant,
+            privilege_id,
+        } = req.body;
+
+        if(!_id){
+            res.status(400);
+            res.send({message: "_id field of existing privilege is required"});
+            return;
+        }
+
+        if(!title){
+            res.status(400);
+            res.send({message: "Please add role title"});
+            return;
+        }
+
+        if(!constant){
+            res.status(400);
+            res.send({message: "Please add role constant value"});
+            return;
+        }
+
+        if(!privilege_id){
+            res.status(400);
+            res.send({message: "Please add privilege_id"});
+            return;
+        }
+
+        // Check if role exists
+        const role = await UserRole.findById(_id);
+
+        if(!role) {
+            res.status(400);
+            res.send({message: 'Role does not exist'});
+            return;
+        }
+        
+        // Update role
+        role.title=title;
+        role.constant=constant;
+        role.privilege_id=privilege_id;
+
+        const role_updated = new UserRole(role);
+        role_updated.save().then((result) => {
+        res.status(201).send({
+            _id: result._id,
+            title: result.title,
+            constant: result.constant,
+            privilege_id: result.privilege_id,
+        });
+        }).catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send({message: 'Role could not be updated'});
+        });
+    }catch(err){
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
+/**
  * @desc Get Application Resource Type by ID
  * @param {Object} req 
  * @param {Object} res 
@@ -275,5 +434,8 @@ module.exports = {
     getAppResourceType,
     getCanActionsByResourceType,
     CreateNewPrivilege,
+    CreateNewAppRole,
     UpdatePrivilege,
+    UpdateAppRole,
+    getAllRolePrivileges,
 }
