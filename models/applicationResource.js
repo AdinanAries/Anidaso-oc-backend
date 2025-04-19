@@ -14,6 +14,11 @@ const applicationResourceSchema = new Schema({
     description: {
         type: String,
         required: [true, "Please add role description"]
+    },
+    constant: {
+        type: Number,
+        required: [true, "Please add app constant for this resource"],
+        unique: true,
     }
 },
 {

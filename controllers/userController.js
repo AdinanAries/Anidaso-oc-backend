@@ -1,7 +1,10 @@
 const {
     User,
     AgentInfo,
-    UserRole
+    UserRole,
+    RolePrivilege,
+    ApplicationPage, 
+    ApplicationResource,
 } = require('../mongo_db_connections'); 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -197,6 +200,25 @@ const getUserDetails = (req, res, next) => {
             role_info = await UserRole.findOne({_id: user?.role_id});
         }
 
+        //Getting User Privileges
+        let role_priv={}
+        if(role_info?.privilege_id){
+            role_priv = await RolePrivilege.findOne({_id: role_info?.privilege_id});
+        }
+
+        // Getting Pages This User Has Access To
+        let pages_can_access_info=[];
+        if(role_priv?.pagesCanAccess){
+            pages_can_access_info = await ApplicationPage.find({_id: { $in: role_priv?.pagesCanAccess }})
+        }
+
+        // Getting Resources This User Has Access To
+        let resources_can_access_info=[];
+        if(role_priv?.resourcesCanActions){
+            let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.resources_id);
+            resources_can_access_info = await ApplicationResource.find({_id: { $in: _id_arr }})
+        }
+
         res.status(200).send({
             _id: user._id,
             first_name: user.first_name,
@@ -208,7 +230,11 @@ const getUserDetails = (req, res, next) => {
             password: user.password,
             make_new_password: user.make_new_password,
             role_id: user?.role_id,
+            priv_id: (role_priv?._id || ""),
             role_info: role_info,
+            priv_info: role_priv,
+            pages_can_access_info: pages_can_access_info,
+            resources_can_access_info: resources_can_access_info,
             token: generateToken(user._id)
         });
     })
@@ -235,6 +261,18 @@ const getUserDetailsByID = (req, res, next) => {
                 role_info = await UserRole.findOne({_id: user?.role_id});
             }
 
+            //Getting User Privileges
+            let role_priv={}
+            if(role_info?.privilege_id){
+                role_priv = await RolePrivilege.findOne({_id: role_info?.privilege_id});
+            }
+
+            // Getting Pages User Has Access To
+            let pages_can_access_info=[];
+            if(role_priv?.pagesCanAccess){
+                pages_can_access_info = await ApplicationPage.find({_id: { $in: role_priv?.pagesCanAccess }})
+            }
+
             res.status(200).send({
                 _id: user._id,
                 first_name: user.first_name,
@@ -246,8 +284,11 @@ const getUserDetailsByID = (req, res, next) => {
                 gender: user.gender,
                 password: user.password,
                 role_id: user?.role_id,
+                priv_id: (role_priv?._id || ""),
                 make_new_password: user?.make_new_password,
                 role_info: role_info,
+                priv_info: role_priv,
+                pages_can_access_info: pages_can_access_info,
                 token: generateToken(user._id)
             });
         }).catch((err) => {

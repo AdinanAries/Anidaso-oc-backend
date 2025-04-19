@@ -240,12 +240,21 @@ const CreateNewAppRole = async (req, res, next) => {
             res.send({message: "privilege_id is required"});
             return;
         }
-        // Check if role exists
-        const roleExists = await UserRole.findOne({title});
+        // Check if role with same title exists
+        let roleExists = await UserRole.findOne({title});
 
         if(roleExists) {
             res.status(400);
             res.send({message: "Role with same title already exist"});
+            return;
+        }
+
+        // Check if role with same constant exists
+        roleExists = await UserRole.findOne({constant});
+
+        if(roleExists) {
+            res.status(400);
+            res.send({message: "Role with same constant already exist"});
             return;
         }
 
