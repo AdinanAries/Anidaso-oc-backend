@@ -5,6 +5,7 @@ const {
     RolePrivilege,
     ApplicationPage, 
     ApplicationResource,
+    CanAction,
 } = require('../mongo_db_connections'); 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -215,8 +216,17 @@ const getUserDetails = (req, res, next) => {
         // Getting Resources This User Has Access To
         let resources_can_access_info=[];
         if(role_priv?.resourcesCanActions){
-            let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.resources_id);
-            resources_can_access_info = await ApplicationResource.find({_id: { $in: _id_arr }})
+            let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.resources_id?.toString());
+            if(_id_arr.join(""))
+                resources_can_access_info = await ApplicationResource.find({_id: { $in: _id_arr }});
+        }
+
+        // Getting Can-Actions of Resources This User Has Access To
+        let resources_can_access_actions_info=[];
+        if(role_priv?.resourcesCanActions){
+            let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.canActions?.join(" , "))?.join(" , ")?.split(" , ");
+            if(_id_arr.join(""))
+                resources_can_access_actions_info = await CanAction.find({_id: { $in: _id_arr }});
         }
 
         res.status(200).send({
@@ -235,6 +245,7 @@ const getUserDetails = (req, res, next) => {
             priv_info: role_priv,
             pages_can_access_info: pages_can_access_info,
             resources_can_access_info: resources_can_access_info,
+            resources_can_access_actions_info: resources_can_access_actions_info,
             token: generateToken(user._id)
         });
     })
@@ -273,6 +284,22 @@ const getUserDetailsByID = (req, res, next) => {
                 pages_can_access_info = await ApplicationPage.find({_id: { $in: role_priv?.pagesCanAccess }})
             }
 
+            // Getting Resources This User Has Access To
+            let resources_can_access_info = [];
+            if(role_priv?.resourcesCanActions){
+                let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.resources_id?.toString());
+                if(_id_arr.join(""))
+                    resources_can_access_info = await ApplicationResource.find({_id: { $in: _id_arr }});
+            }
+
+            // Getting Can-Actions of Resources This User Has Access To
+            let resources_can_access_actions_info = [];
+            if(role_priv?.resourcesCanActions){
+                let _id_arr = role_priv?.resourcesCanActions?.map(each=>each?.canActions?.join(","))?.join(",")?.split(",");
+                if(_id_arr.join(""))
+                    resources_can_access_actions_info = await CanAction.find({_id: { $in: _id_arr }});
+            }
+
             res.status(200).send({
                 _id: user._id,
                 first_name: user.first_name,
@@ -289,6 +316,8 @@ const getUserDetailsByID = (req, res, next) => {
                 role_info: role_info,
                 priv_info: role_priv,
                 pages_can_access_info: pages_can_access_info,
+                resources_can_access_info: resources_can_access_info,
+                resources_can_access_actions_info: resources_can_access_actions_info,
                 token: generateToken(user._id)
             });
         }).catch((err) => {
