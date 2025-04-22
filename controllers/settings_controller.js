@@ -27,8 +27,14 @@ const addOcServerSettings = async (req, res, next) => {
         const settingsExists = await OcServerSettings.findOne({property});
 
         if(settingsExists) {
-            await OcServerSettings.updateOne({property}, {value});
-            res.send({message: "Server-settings has been modified"});
+            res.status(201);
+            // Update Existing Settings
+            let _settings = await OcServerSettings.updateOne({property}, {value});
+            res.send({
+                _id: _settings._id,
+                property: _settings.property,
+                value: _settings.value,
+            });
             return
         }
 
@@ -80,8 +86,13 @@ const addCustAppServerSettings = async (req, res, next) => {
 
         if(settingsExists) {
             res.status(201);
-            await CustAppServerSettings.updateOne({property}, {value});
-            res.send({message: "Server-settings has been modified"});
+            // Updating Existing Settings
+            let _settings = await CustAppServerSettings.updateOne({property}, {value});
+            res.send({
+                _id: _settings._id,
+                property: _settings.property,
+                value: _settings.value,
+            });
             return;
         }
 
