@@ -1,3 +1,4 @@
+const CONSTANTS = require("../constants");
 const {
     User,
     AgentInfo,
@@ -58,7 +59,13 @@ const signup = asyncHandler(async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Adding user role id
-        let usr_role = await UserRole.findOne({constant: user_role})
+        let usr_role = await UserRole.findOne({constant: user_role});
+
+        if(!usr_role) {
+            res.status(400);
+            res.send({message: "User role specified does not exist"});
+            return;
+        }
 
         // Create user
         const user = new User({
@@ -75,6 +82,50 @@ const signup = asyncHandler(async (req, res, next) => {
         });
         user.save().then((result) => {
             console.log(result);
+
+            // Create initial information for Agent - User
+            if(usr_role?.constant===CONSTANTS.app_role_constants.agent){
+                let price_markup = {};
+                const pm_info = new AgentInfo({
+                    user_id: result._id,
+                    property: "price_markup",
+                    value: 15,
+                });
+
+                pm_info.save().then((result) => {
+                    price_markup = {
+                        _id: result._id,
+                        user_id: result.user_id,
+                        property: result.property,
+                        value: result.value,
+                    };
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500);
+                    res.send({message: 'Default price markup for this user was not established'});
+                });
+
+                let data_provider = {};
+                const dp_info = new AgentInfo({
+                    user_id: result._id,
+                    property: "data_provider",
+                    value: 'duffel',
+                });
+
+                dp_info.save().then((result) => {
+                    data_provider = {
+                        _id: result._id,
+                        user_id: result.user_id,
+                        property: result.property,
+                        value: result.value,
+                    };
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500);
+                    res.send({message: 'Default data provider for this user was not established'});
+                });
+            }
+
             res.status(201).send({
                 _id: result._id,
                 first_name: result.first_name,
@@ -87,6 +138,8 @@ const signup = asyncHandler(async (req, res, next) => {
                 password: result.password,
                 role_id: result.role_id,
                 role_info: usr_role,
+                price_markup: price_markup,
+                data_provider: data_provider,
                 make_new_password: result.make_new_password,
                 //token: generateToken(result._id)
             });
@@ -229,6 +282,12 @@ const getUserDetails = (req, res, next) => {
                 resources_can_access_actions_info = await CanAction.find({_id: { $in: _id_arr }});
         }
 
+        // Getting Agent Info For Agent User
+        let agent_info = [];
+        if(role_info?.constant===CONSTANTS.app_role_constants.agent){
+            agent_info = await AgentInfo.find({user_id: user._id});
+        }
+
         res.status(200).send({
             _id: user._id,
             first_name: user.first_name,
@@ -242,6 +301,7 @@ const getUserDetails = (req, res, next) => {
             role_id: user?.role_id,
             priv_id: (role_priv?._id || ""),
             role_info: role_info,
+            agent_info: agent_info,
             priv_info: role_priv,
             pages_can_access_info: pages_can_access_info,
             resources_can_access_info: resources_can_access_info,
@@ -300,6 +360,12 @@ const getUserDetailsByID = (req, res, next) => {
                     resources_can_access_actions_info = await CanAction.find({_id: { $in: _id_arr }});
             }
 
+            // Getting Agent Info For Agent User
+            let agent_info = [];
+            if(role_info?.constant===CONSTANTS.app_role_constants.agent){
+                agent_info = await AgentInfo.find({user_id: user._id});
+            }
+
             res.status(200).send({
                 _id: user._id,
                 first_name: user.first_name,
@@ -314,6 +380,7 @@ const getUserDetailsByID = (req, res, next) => {
                 priv_id: (role_priv?._id || ""),
                 make_new_password: user?.make_new_password,
                 role_info: role_info,
+                agent_info: agent_info,
                 priv_info: role_priv,
                 pages_can_access_info: pages_can_access_info,
                 resources_can_access_info: resources_can_access_info,

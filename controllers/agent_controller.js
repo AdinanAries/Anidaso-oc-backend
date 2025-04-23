@@ -59,7 +59,7 @@ const addAgentSettings = async (req, res, next) => {
         }).catch((err) => {
             console.log(err);
             res.status(500);
-            res.send({message: 'Server settings could not be created'});
+            res.send({message: 'Agent Info could not be created'});
         });
     }catch(e){
         console.log(e);
@@ -103,7 +103,7 @@ const getAgentInfoSettings = async (req, res, next) => {
             res.status(500);
             res.send({message: "Error while fetching data from DB"});
         });
-        console.log(info)
+        
         res.send(info);
     } catch (e) {
         console.log(e);

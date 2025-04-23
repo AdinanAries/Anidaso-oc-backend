@@ -10,7 +10,6 @@ const agentInfoSchema = new Schema({
     property: {
         type: String,
         required: [true, "Please add the infomation property/title"],
-        unique: true,
     },
     value: {
         type: String,
