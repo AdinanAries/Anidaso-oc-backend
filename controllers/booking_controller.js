@@ -43,7 +43,7 @@ const get_recent_bookings = async (req, res, next) => {
 
     // Check if Admin or Owner - then remove user-id to get all bookings
     const admin_const = CONSTANTS.app_role_constants.admin;
-    const owner_const = CONSTANTS.app_page_constants.owner;
+    const owner_const = CONSTANTS.app_role_constants.owner;
     const role_const = usr_role?.constant;
     if(role_const===admin_const || role_const===owner_const){
         search_obj = {};
