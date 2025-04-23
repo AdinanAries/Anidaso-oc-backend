@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bookingIntentLogSchema = new Schema({
-    agentID: {
+    oc_user_id: {
         type: String,
         required: false,
     },
