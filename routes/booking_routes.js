@@ -12,9 +12,11 @@ const {
     search_booked_flight,
     search_booked_hotel,
     get_booking_intent,
+    get_booking_attemps,
 } = require("../controllers/booking_controller");
 
 // routes
+router.get("/attempts/:offset/:limit", protect, get_booking_attemps);
 router.get("/get-recent/:offset/:limit", protect, get_recent_bookings);
 router.get("/get-by-reference-number/:reference", protect, get_booking_by_reference_number);
 router.get("/get-by-id/:id", protect, get_booking_by_id);

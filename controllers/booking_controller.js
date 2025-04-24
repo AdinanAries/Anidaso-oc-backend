@@ -65,6 +65,64 @@ const get_recent_bookings = async (req, res, next) => {
 
 }
 
+const get_booking_attemps = async (req, res, next) => {
+
+    const user_id = req.user.id;
+    let offset = parseInt(req.params.offset);
+    --offset; //offset starts from 0 as of array indexes
+    let limit = parseInt(req.params.limit);
+
+    if(!user_id){
+        res.status(400);
+        res.send({message: "user_id field is required!"});
+        return;
+    }
+
+    let search_obj = {
+        oc_user_id: user_id
+    }
+    
+    // Find User
+    const user = await User.findOne({_id: user_id});
+    if(!user) {
+        res.status(400);
+        res.send({message: "User was not found!"});
+        return;
+    }
+
+    // Get User role
+    let usr_role = await UserRole.findOne({_id: user?.role_id});
+
+    if(!usr_role) {
+        res.status(400);
+        res.send({message: "User role does not exist"});
+        return;
+    }
+
+    // Check if Admin or Owner - then remove user-id to get all bookings
+    const admin_const = CONSTANTS.app_role_constants.admin;
+    const owner_const = CONSTANTS.app_role_constants.owner;
+    const role_const = usr_role?.constant;
+    if(role_const===admin_const || role_const===owner_const){
+        search_obj = {};
+    }
+
+    let total_items = await BookingIntentLog.count(search_obj).catch(err => {
+        console.log(err);
+        res.send([]);
+    });
+
+    res.set("Pagination-Total-Items", total_items);
+
+    let bookings_attempts = await BookingIntentLog.find(search_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        console.log(err);
+        res.send([]);
+    });
+    
+    res.send(bookings_attempts);
+
+}
+
 const get_booking_by_reference_number = async (req, res, next)=>{
     
     let reference = req.params.reference;
@@ -374,4 +432,5 @@ module.exports = {
     search_booked_flight,
     search_booked_hotel,
     get_booking_intent,
+    get_booking_attemps,
 }
