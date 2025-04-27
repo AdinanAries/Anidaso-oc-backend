@@ -35,6 +35,7 @@ app.use("/api/settings", require("./routes/settings_routes"));
 app.use("/api/roles", require("./routes/roleRoutes"));
 app.use("/api/agents", require("./routes/agent_routes"));
 app.use("/api/booking-links", require("./routes/booking_link_routes"));
+app.use("/api/customers", require("./routes/customers_routes"));
 
 // Local Utilities
 const check_is_cust_prod_db = () => {

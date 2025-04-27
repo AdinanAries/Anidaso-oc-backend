@@ -21,7 +21,7 @@ const walletTransactionTypeSchema = new Schema({
         required: [true, "Please add unit action point for this transaction type"],
     },
     cost_currency: {
-        type: Number,
+        type: String,
         required: [true, "Please add cost currency"],
     },
     constant: { // Constants for matching privilege actions with resources

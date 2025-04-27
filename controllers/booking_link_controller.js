@@ -131,10 +131,9 @@ const addBookingLink = async (req, res, next) => {
                 profit_type,
             }, {
                 profit_type_value,
-                visited,
-                booked
+                //visited,
+                //booked
             });
-            console.log(__updated)
             res.send(__updated);
             return;
         }

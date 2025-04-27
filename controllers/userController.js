@@ -50,7 +50,7 @@ const signup = asyncHandler(async (req, res, next) => {
 
         if(userExists) {
             res.status(400);
-            res.send({message: "User already exist"});
+            res.send({message: "User with this email already exist"});
             return;
         }
 
