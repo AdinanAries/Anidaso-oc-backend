@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const applicationResourceTypeSchema = new Schema({
     resource_type_title: {
         type: String,
-        required: [true, "Please add role description"]
+        required: [true, "Please add role title"]
     },
     description: {
         type: String,

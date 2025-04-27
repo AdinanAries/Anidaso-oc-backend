@@ -14,6 +14,7 @@ const applicationResourceSchema = require("./models/applicationResource");
 const applicationResourceTypeSchema = require("./models/applicationResourceType");
 const canActionSchema = require("./models/canAction");
 const userRoleSchema = require("./models/userRole");
+const bookingLinkSchema = require("./models/bookingLink");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -52,6 +53,7 @@ const ApplicationResource = welldugo_oc_conn.model('ApplicationResource', applic
 const ApplicationResourceType = welldugo_oc_conn.model('ApplicationResourceType', applicationResourceTypeSchema);
 const CanAction = welldugo_oc_conn.model('CanAction', canActionSchema);
 const UserRole = welldugo_oc_conn.model('UserRole', userRoleSchema);
+const BookingLink = welldugo_oc_conn.model('BookingLink', bookingLinkSchema);
 
 module.exports = {
     BookingHistory,
@@ -67,6 +69,7 @@ module.exports = {
     ApplicationResourceType,
     CanAction,
     UserRole,
+    BookingLink,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,

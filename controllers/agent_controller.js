@@ -21,11 +21,13 @@ const addAgentSettings = async (req, res, next) => {
         if(!user_id){
             res.status(400);
             res.send({message: "user-id field is required!"});
+            return;
         }
 
         if(!property || !value){
             res.status(400);
             res.send({message: "property and value fields are required!"});
+            return;
         }
 
         // Check if agent info exists
