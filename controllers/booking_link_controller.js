@@ -72,6 +72,8 @@ const addBookingLink = async (req, res, next) => {
             booked
         } = req.body;
 
+        let was_updated_status="";
+
         if(!oc_user_id){
             res.status(400);
             res.send({message: "user-id field is required!"});
@@ -116,25 +118,44 @@ const addBookingLink = async (req, res, next) => {
         if(linkExists) {
             res.status(201);
             let __updated = await BookingLink.updateOne({
-                oc_user_id,
-                client_app_url,
-                product,
-                trip_type,
-                departure_airport,
-                destination_airport,
-                travel_dates,
-                cabin,
-                num_of_adults,
-                num_of_children,
-                num_of_infants,
-                data_provider,
-                profit_type,
+                _id: linkExists?._id
             }, {
                 profit_type_value,
-                //visited,
-                //booked
             });
-            res.send(__updated);
+            if (__updated.matchedCount === 0) {
+                // No document matching the filter was found
+                console.log("Booking link was not found during update!");
+                was_updated_status="Booking link was not found during update!";
+                return
+            } else if (__updated.modifiedCount === 0) {
+                // A document was matched, but not modified (e.g., the update didn't change any values)
+                console.log("Booking link already exists however failed on update!");
+                was_updated_status="Booking link already exists however failed on update!";
+                return;
+            }else {
+                console.log("Booking link already exists and was updated!");
+                was_updated_status="Booking link already exists and was updated!";
+            }
+            res.send({
+                _id: linkExists._id,
+                oc_user_id: linkExists.oc_user_id,
+                client_app_url: linkExists.client_app_url,
+                product: linkExists.product,
+                trip_type: linkExists.trip_type,
+                departure_airport: linkExists.departure_airport,
+                destination_airport: linkExists.destination_airport,
+                travel_dates: linkExists.travel_dates,
+                cabin: linkExists.cabin,
+                num_of_adults: linkExists.num_of_adults,
+                num_of_children: linkExists.num_of_children,
+                num_of_infants: linkExists.num_of_infants,
+                data_provider: linkExists.data_provider,
+                profit_type: linkExists.profit_type,
+                profit_type_value: linkExists.profit_type_value,
+                visited: linkExists.visited,
+                booked: linkExists.booked,
+                was_updated_status: was_updated_status,
+            });
             return;
         }
 
@@ -176,7 +197,8 @@ const addBookingLink = async (req, res, next) => {
                 profit_type: result.profit_type,
                 profit_type_value: result.profit_type_value,
                 visited: result.visited,
-                booked: result.booked
+                booked: result.booked,
+                was_updated_status: "new document was created"
             });
         }).catch((err) => {
             console.log(err);

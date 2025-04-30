@@ -7,6 +7,7 @@ const {
     ApplicationPage, 
     ApplicationResource,
     CanAction,
+    Wallet,
 } = require('../mongo_db_connections'); 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -80,50 +81,41 @@ const signup = asyncHandler(async (req, res, next) => {
             password: hashedPassword,
             make_new_password: true
         });
-        user.save().then((result) => {
-            console.log(result);
+        user.save().then(async (result) => {
+            
+            let price_markup = {};
+            let data_provider = {};
+            let agent_wallet = {};
 
             // Create initial information for Agent - User
             if(usr_role?.constant===CONSTANTS.app_role_constants.agent){
-                let price_markup = {};
+                
+                // Creating Default Price Markup
                 const pm_info = new AgentInfo({
                     user_id: result._id,
                     property: "price_markup",
                     value: 15,
                 });
 
-                pm_info.save().then((result) => {
-                    price_markup = {
-                        _id: result._id,
-                        user_id: result.user_id,
-                        property: result.property,
-                        value: result.value,
-                    };
-                }).catch((err) => {
-                    console.log(err);
-                    res.status(500);
-                    res.send({message: 'Default price markup for this user was not established'});
-                });
+                price_markup = await pm_info.save();
 
-                let data_provider = {};
+                // Creating Default Data Provider
                 const dp_info = new AgentInfo({
                     user_id: result._id,
                     property: "data_provider",
                     value: 'duffel',
                 });
 
-                dp_info.save().then((result) => {
-                    data_provider = {
-                        _id: result._id,
-                        user_id: result.user_id,
-                        property: result.property,
-                        value: result.value,
-                    };
-                }).catch((err) => {
-                    console.log(err);
-                    res.status(500);
-                    res.send({message: 'Default data provider for this user was not established'});
+                data_provider = await dp_info.save();
+
+                // Creating Wallet
+                const wallet = new Wallet({
+                    oc_user_id: result._id,
+                    last_top_up_date: new Date().toISOString(),
+                    current_balance: 0.00, 
                 });
+
+                agent_wallet = await wallet.save();
             }
 
             res.status(201).send({
@@ -138,8 +130,24 @@ const signup = asyncHandler(async (req, res, next) => {
                 password: result.password,
                 role_id: result.role_id,
                 role_info: usr_role,
-                price_markup: price_markup,
-                data_provider: data_provider,
+                price_markup_info: {
+                    _id: price_markup?._id,
+                    user_id: price_markup?.user_id,
+                    property: price_markup?.property,
+                    value: price_markup?.value,
+                },
+                data_provider_info: {
+                    _id: data_provider?._id,
+                    user_id: data_provider?.user_id,
+                    property: data_provider?.property,
+                    value: data_provider?.value,
+                },
+                wallet_info: {
+                    _id: agent_wallet?._id,
+                    oc_user_id: agent_wallet?.oc_user_id,
+                    last_top_up_date: agent_wallet?.last_top_up_date,
+                    current_balance: agent_wallet?.current_balance
+                },
                 make_new_password: result.make_new_password,
                 //token: generateToken(result._id)
             });
@@ -282,10 +290,12 @@ const getUserDetails = (req, res, next) => {
                 resources_can_access_actions_info = await CanAction.find({_id: { $in: _id_arr }});
         }
 
-        // Getting Agent Info For Agent User
+        // Getting Wallet and Agent Info For Agent User
         let agent_info = [];
+        let wallet_info = {};
         if(role_info?.constant===CONSTANTS.app_role_constants.agent){
             agent_info = await AgentInfo.find({user_id: user._id});
+            wallet_info = await Wallet.findOne({oc_user_id: user._id});
         }
 
         res.status(200).send({
@@ -301,6 +311,7 @@ const getUserDetails = (req, res, next) => {
             role_id: user?.role_id,
             priv_id: (role_priv?._id || ""),
             role_info: role_info,
+            wallet_info: wallet_info,
             agent_info: agent_info,
             priv_info: role_priv,
             pages_can_access_info: pages_can_access_info,
@@ -362,8 +373,10 @@ const getUserDetailsByID = (req, res, next) => {
 
             // Getting Agent Info For Agent User
             let agent_info = [];
+            let wallet_info = {};
             if(role_info?.constant===CONSTANTS.app_role_constants.agent){
                 agent_info = await AgentInfo.find({user_id: user._id});
+                wallet_info = await Wallet.findOne({oc_user_id: user._id});
             }
 
             res.status(200).send({
@@ -380,6 +393,7 @@ const getUserDetailsByID = (req, res, next) => {
                 priv_id: (role_priv?._id || ""),
                 make_new_password: user?.make_new_password,
                 role_info: role_info,
+                wallet_info: wallet_info,
                 agent_info: agent_info,
                 priv_info: role_priv,
                 pages_can_access_info: pages_can_access_info,

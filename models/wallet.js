@@ -16,6 +16,10 @@ const walletSchema = new Schema({
         type: Number,
         required: [true, "Please add current wallet balance"],
     },
+    balance_currency: {
+        type: String,
+        required: [true, "Please add wallet currency"]
+    }
 },
 {
     timestamps: true

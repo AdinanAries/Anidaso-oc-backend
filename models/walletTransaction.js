@@ -24,8 +24,16 @@ const walletTransactionSchema = new Schema({
     description: {
         type: String,
         required: [true, "Please add description of transaction"],
+    },
+    wallet_balance_before: {
+        type: Number,
+        required: [true, "Please add wallet balance before transaction"],
+    }, 
+    wallet_balance_after: {
+        type: Number,
+        required: [true, "Please add wallet balance after transaction"],
     }
-},
+},  //////To Do: ADD Wallet Controller and Routs for Wallet, Wallet Transactions, Wallet Transaction Types, Visited Links and Booked Links
 {
     timestamps: true
 });

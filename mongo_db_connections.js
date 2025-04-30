@@ -15,6 +15,11 @@ const applicationResourceTypeSchema = require("./models/applicationResourceType"
 const canActionSchema = require("./models/canAction");
 const userRoleSchema = require("./models/userRole");
 const bookingLinkSchema = require("./models/bookingLink");
+const walletSchema = require("./models/wallet");
+const walletTransactionTypeSchema = require("./models/walletTransactionType");
+const walletTransactionSchema = require("./models/walletTransaction");
+const visitedLinkSchema = require("./models/visitedLink");
+const bookedLinkSchema = require("./models/bookedLink");
 const customerSchema = require("./models/customer");
 
 // mongo connections strings
@@ -56,6 +61,11 @@ const CanAction = welldugo_oc_conn.model('CanAction', canActionSchema);
 const UserRole = welldugo_oc_conn.model('UserRole', userRoleSchema);
 const BookingLink = welldugo_oc_conn.model('BookingLink', bookingLinkSchema);
 const Customer = welldugo_oc_conn.model("Customer", customerSchema);
+const Wallet = welldugo_oc_conn.model("Wallet", walletSchema);
+const WalletTransactionType = welldugo_oc_conn.model("WalletTransactionType", walletTransactionTypeSchema);
+const WalletTransaction = welldugo_oc_conn.model("WalletTransaction", walletTransactionSchema);
+const VisitedLink = welldugo_oc_conn.model("VisitedLink", visitedLinkSchema);
+const BookedLink = welldugo_oc_conn.model("BookedLink", bookedLinkSchema);
 
 module.exports = {
     BookingHistory,
@@ -73,6 +83,11 @@ module.exports = {
     UserRole,
     BookingLink,
     Customer,
+    Wallet,
+    WalletTransactionType,
+    WalletTransaction,
+    VisitedLink,
+    BookedLink,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,
