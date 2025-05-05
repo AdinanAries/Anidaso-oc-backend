@@ -29,8 +29,7 @@ const bookedLinkSchema = new Schema({
         required: [true, "Please add wallet transaction id"]
     },
     customer_id: {
-            type: mongoose.Schema.Types.ObjectId,
-        ref: 'Customer',
+        type: String,
         required: false
     },
 },

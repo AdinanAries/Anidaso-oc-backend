@@ -1,6 +1,7 @@
 //models
 const {
-    AgentInfo
+    AgentInfo,
+    User,
 } = require("../mongo_db_connections");
 
 /**
@@ -115,7 +116,48 @@ const getAgentInfoSettings = async (req, res, next) => {
 
 }
 
+/**
+ * @desc Get Basic Public Agent Info by Agent ID
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @access Protected
+ */
+const getBasicPublicAgentInfo = async (req, res, next) => {
+    try {
+        
+        let agent_id = req.params?.agent_id;
+
+        if(!agent_id){
+            res.status(400);
+            res.send({message: "Agent-ID field is required!"});
+            return;
+        }
+
+        let agent = await User.findOne({
+            _id: agent_id,
+        }).catch(err => {
+            console.log(err);
+            res.status(500);
+            res.send({message: "Error while fetching data from DB"});
+        });
+        
+        res.send({
+            first_name: agent?.first_name,
+            last_name: agent?.last_name,
+            email: agent?.email,
+            phone: agent?.phone,
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
+
+}
+
 module.exports = {
     getAgentInfoSettings,
     addAgentSettings,
+    getBasicPublicAgentInfo,
 }
