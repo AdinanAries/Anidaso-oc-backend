@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    company_id: {
+        type: String,
+        required: false,
+    },
     first_name: {
         type: String,
         required: [true, "Please add first name"]
