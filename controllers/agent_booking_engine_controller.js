@@ -38,6 +38,24 @@ const add_agent_booking_engine = async (req, res, next) => {
             searchButtonBorderRadius,
             actionButtonBorderRadius,
             closeButtonBorderRadius,
+            greetingsCardBg,
+            greetingsCardTextColor,
+            greetingsCardSecTextColor, 
+            greetingsCardIconColor,
+            greetingsCardTitleColor,
+            greetingsCardBorderRadius,
+            hideGreetingsCard,
+            hideCompanyLogo,
+            hideCompanyName,
+            homePageSearchButtonTextColor,
+            homePageSearchButtonBgColor,
+            homePageSearchButtonIconColor,
+            homePageSearchButtonBorderRadius,
+            homePageSearchInputBackground,
+            homePageSearchInputIconColor,
+            homePageSearchInputBorderColor,
+            homePageSearchInputborderRadius,
+            homePageSearchInputTextColor,
         } = req.body;
 
         if(!oc_user_id){
@@ -69,7 +87,25 @@ const add_agent_booking_engine = async (req, res, next) => {
             headerLogoBorderRadius===undefined ||
             searchButtonBorderRadius===undefined ||
             actionButtonBorderRadius===undefined ||
-            closeButtonBorderRadius===undefined
+            closeButtonBorderRadius===undefined ||
+            !greetingsCardBg ||
+            !greetingsCardTextColor ||
+            !greetingsCardSecTextColor || 
+            !greetingsCardIconColor ||
+            !greetingsCardTitleColor ||
+            greetingsCardBorderRadius===undefined ||
+            hideGreetingsCard===undefined ||
+            hideCompanyLogo===undefined ||
+            hideCompanyName===undefined ||
+            !homePageSearchButtonTextColor ||
+            !homePageSearchButtonBgColor ||
+            !homePageSearchButtonIconColor ||
+            homePageSearchButtonBorderRadius===undefined ||
+            !homePageSearchInputBackground ||
+            !homePageSearchInputIconColor ||
+            !homePageSearchInputBorderColor ||
+            homePageSearchInputborderRadius===undefined ||
+            !homePageSearchInputTextColor
         ){
             res.status(400);
             res.send({message: "all fields are required!"});
@@ -109,6 +145,24 @@ const add_agent_booking_engine = async (req, res, next) => {
                 searchButtonBorderRadius,
                 actionButtonBorderRadius,
                 closeButtonBorderRadius,
+                greetingsCardBg,
+                greetingsCardTextColor,
+                greetingsCardSecTextColor, 
+                greetingsCardIconColor,
+                greetingsCardTitleColor,
+                greetingsCardBorderRadius,
+                hideGreetingsCard,
+                hideCompanyLogo,
+                hideCompanyName,
+                homePageSearchButtonTextColor,
+                homePageSearchButtonBgColor,
+                homePageSearchButtonIconColor,
+                homePageSearchButtonBorderRadius,
+                homePageSearchInputBackground,
+                homePageSearchInputIconColor,
+                homePageSearchInputBorderColor,
+                homePageSearchInputborderRadius,
+                homePageSearchInputTextColor,
             });
             if (__updated.matchedCount === 0) {
                 // No document matching the filter was found
@@ -154,6 +208,24 @@ const add_agent_booking_engine = async (req, res, next) => {
                 searchButtonBorderRadius: beExists.searchButtonBorderRadius,
                 actionButtonBorderRadius: beExists.actionButtonBorderRadius,
                 closeButtonBorderRadius: beExists.closeButtonBorderRadius,
+                greetingsCardBg: beExists.greetingsCardBg,
+                greetingsCardTextColor: beExists.greetingsCardTextColor,
+                greetingsCardSecTextColor: beExists.greetingsCardSecTextColor, 
+                greetingsCardIconColor: beExists.greetingsCardIconColor,
+                greetingsCardTitleColor: beExists.greetingsCardTitleColor,
+                greetingsCardBorderRadius: beExists.greetingsCardBorderRadius,
+                hideGreetingsCard: beExists.hideGreetingsCard,
+                hideCompanyLogo: beExists.hideCompanyLogo,
+                hideCompanyName: beExists.hideCompanyName,
+                homePageSearchButtonTextColor: beExists.homePageSearchButtonTextColor,
+                homePageSearchButtonBgColor: beExists.homePageSearchButtonBgColor,
+                homePageSearchButtonIconColor: beExists.homePageSearchButtonIconColor,
+                homePageSearchButtonBorderRadius: beExists.homePageSearchButtonBorderRadius,
+                homePageSearchInputBackground: beExists.homePageSearchInputBackground,
+                homePageSearchInputIconColor: beExists.homePageSearchInputIconColor,
+                homePageSearchInputBorderColor: beExists.homePageSearchInputBorderColor,
+                homePageSearchInputborderRadius: beExists.homePageSearchInputborderRadius,
+                homePageSearchInputTextColor: beExists.homePageSearchInputTextColor,
                 was_updated_status: was_updated_status,
             });
             return;
@@ -184,7 +256,25 @@ const add_agent_booking_engine = async (req, res, next) => {
             headerLogoBorderRadius,
             searchButtonBorderRadius,
             actionButtonBorderRadius,
-            closeButtonBorderRadius
+            closeButtonBorderRadius,
+            greetingsCardBg,
+            greetingsCardTextColor,
+            greetingsCardSecTextColor, 
+            greetingsCardIconColor,
+            greetingsCardTitleColor,
+            greetingsCardBorderRadius,
+            hideGreetingsCard,
+            hideCompanyLogo,
+            hideCompanyName,
+            homePageSearchButtonTextColor,
+            homePageSearchButtonBgColor,
+            homePageSearchButtonIconColor,
+            homePageSearchButtonBorderRadius,
+            homePageSearchInputBackground,
+            homePageSearchInputIconColor,
+            homePageSearchInputBorderColor,
+            homePageSearchInputborderRadius,
+            homePageSearchInputTextColor,
         });
         be.save().then((result) => {
             console.log(result)
@@ -214,6 +304,24 @@ const add_agent_booking_engine = async (req, res, next) => {
                 searchButtonBorderRadius: result.searchButtonBorderRadius,
                 actionButtonBorderRadius: result.actionButtonBorderRadius,
                 closeButtonBorderRadius: result.closeButtonBorderRadius,
+                greetingsCardBg: result.greetingsCardBg,
+                greetingsCardTextColor: result.greetingsCardTextColor,
+                greetingsCardSecTextColor: result.greetingsCardSecTextColor, 
+                greetingsCardIconColor: result.greetingsCardIconColor,
+                greetingsCardTitleColor: result.greetingsCardTitleColor,
+                greetingsCardBorderRadius: result.greetingsCardBorderRadius,
+                hideGreetingsCard: result.hideGreetingsCard,
+                hideCompanyLogo: result.hideCompanyLogo,
+                hideCompanyName: result.hideCompanyName,
+                homePageSearchButtonTextColor: result.homePageSearchButtonTextColor,
+                homePageSearchButtonBgColor: result.homePageSearchButtonBgColor,
+                homePageSearchButtonIconColor: result.homePageSearchButtonIconColor,
+                homePageSearchButtonBorderRadius: result.homePageSearchButtonBorderRadius,
+                homePageSearchInputBackground: result.homePageSearchInputBackground,
+                homePageSearchInputIconColor: result.homePageSearchInputIconColor,
+                homePageSearchInputBorderColor: result.homePageSearchInputBorderColor,
+                homePageSearchInputborderRadius: result.homePageSearchInputborderRadius,
+                homePageSearchInputTextColor: result.homePageSearchInputTextColor,
             });
         }).catch((err) => {
             console.log(err);

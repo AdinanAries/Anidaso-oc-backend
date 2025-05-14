@@ -100,6 +100,78 @@ const agentBookingEngineSchema = new Schema({
         type: Number,
         required: [true, "Please add closeButtonBorderRadius field"]
     },
+    greetingsCardBg: {
+        type: String,
+        required: [true, "Please add greetingsCardBg field"]
+    },
+    greetingsCardTextColor: {
+        type: String,
+        required: [true, "Please add greetingsCardTextColor field"]
+    },
+    greetingsCardSecTextColor: {
+        type: String,
+        required: [true, "Please add greetingsCardSecTextColor field"]
+    }, 
+    greetingsCardIconColor: {
+        type: String,
+        required: [true, "Please add greetingsCardIconColor field"]
+    },
+    greetingsCardTitleColor: {
+        type: String,
+        required: [true, "Please add greetingsCardTitleColor field"]
+    },
+    greetingsCardBorderRadius: {
+        type: Number,
+        required: [true, "Please add greetingsCardBorderRadius field"]
+    },
+    hideGreetingsCard: {
+        type: Boolean,
+        required: [true, "Please add hideGreetingsCard field"]
+    },
+    hideCompanyLogo: {
+        type: Boolean,
+        required: [true, "Please add hideCompanyLogo field"]
+    },
+    hideCompanyName: {
+        type: Boolean,
+        required: [true, "Please add hideCompanyLogo field"]
+    },
+    homePageSearchButtonTextColor: {
+        type: String,
+        required: [true, "Please add homePageSearchButtonTextColor field"]
+    },
+    homePageSearchButtonBgColor: {
+        type: String,
+        required: [true, "Please add homePageSearchButtonBgColor field"]
+    },
+    homePageSearchButtonIconColor: {
+        type: String,
+        required: [true, "Please add homePageSearchButtonIconColor field"]
+    },
+    homePageSearchButtonBorderRadius: {
+        type: Number,
+        required: [true, "Please add homePageSearchButtonBorderRadius field"]
+    },
+    homePageSearchInputBackground: {
+        type: String,
+        required: [true, "Please add homePageSearchInputBackground field"]
+    },
+    homePageSearchInputIconColor: {
+        type: String,
+        required: [true, "Please add homePageSearchInputIconColor field"]
+    },
+    homePageSearchInputBorderColor: {
+        type: String,
+        required: [true, "Please add homePageSearchInputBorderColor field"]
+    },
+    homePageSearchInputborderRadius: {
+        type: Number,
+        required: [true, "Please add homePageSearchInputborderRadius field"]
+    },
+    homePageSearchInputTextColor: {
+        type: String,
+        required: [true, "Please add homePageSearchInputTextColor field"]
+    },
 },
 {
     timestamps: true
