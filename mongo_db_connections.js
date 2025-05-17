@@ -22,6 +22,7 @@ const visitedLinkSchema = require("./models/visitedLink");
 const bookedLinkSchema = require("./models/bookedLink");
 const customerSchema = require("./models/customer");
 const agentBookingEngineSchema = require("./models/agentBookingEngine");
+const companyInfoSchema = require("./models/companyInfo");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -68,6 +69,7 @@ const WalletTransaction = welldugo_oc_conn.model("WalletTransaction", walletTran
 const VisitedLink = welldugo_oc_conn.model("VisitedLink", visitedLinkSchema);
 const BookedLink = welldugo_oc_conn.model("BookedLink", bookedLinkSchema);
 const AgentBookingEngine = welldugo_oc_conn.model("AgentBookingEngine", agentBookingEngineSchema);
+const CompanyInfo = welldugo_oc_conn.model("CompanyInfo", companyInfoSchema);
 
 module.exports = {
     BookingHistory,
@@ -91,6 +93,7 @@ module.exports = {
     VisitedLink,
     BookedLink,
     AgentBookingEngine,
+    CompanyInfo,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,

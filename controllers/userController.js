@@ -220,6 +220,7 @@ const login = asyncHandler(async (req, res, next) => {
 
             res.status(201).send({
                 _id: user._id,
+                company_id: user.company_id,
                 first_name: user.first_name,
                 middle_name: user.middle_name,
                 last_name: user.last_name,
@@ -300,6 +301,7 @@ const getUserDetails = (req, res, next) => {
 
         res.status(200).send({
             _id: user._id,
+            company_id: user.company_id,
             first_name: user.first_name,
             middle_name: user.middle_name,
             last_name: user.last_name,
@@ -381,6 +383,7 @@ const getUserDetailsByID = (req, res, next) => {
 
             res.status(200).send({
                 _id: user._id,
+                company_id: user.company_id,
                 first_name: user.first_name,
                 middle_name: user.middle_name,
                 last_name: user.last_name,
@@ -451,6 +454,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
             email,
             role_id,
             make_new_password,
+            company_id,
         } = req.body;
 
         if(
@@ -489,11 +493,13 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
         user.role_id=role_id;
         user.password=password;
         user.make_new_password=make_new_password;
+        user.company_id=company_id;
 
         const user_updated = new User(user);
         user_updated.save().then((result) => {
             res.status(201).send({
                 _id: result._id,
+                company_id: result.company_id,
                 first_name: result.first_name,
                 middle_name: result.middle_name,
                 last_name: result.last_name,

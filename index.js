@@ -38,6 +38,7 @@ app.use("/api/booking-links", require("./routes/booking_link_routes"));
 app.use("/api/wallets", require("./routes/wallet_routes"));
 app.use("/api/customers", require("./routes/customers_routes"));
 app.use("/api/booking-engine", require("./routes/agent_booking_engine_routes"));
+app.use("/api/company-info", require("./routes/company_info_routes"));
 
 // Local Utilities
 const check_is_cust_prod_db = () => {

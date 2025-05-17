@@ -2,6 +2,7 @@
 const {
     AgentInfo,
     User,
+    CompanyInfo,
 } = require("../mongo_db_connections");
 
 /**
@@ -139,14 +140,34 @@ const getBasicPublicAgentInfo = async (req, res, next) => {
         }).catch(err => {
             console.log(err);
             res.status(500);
-            res.send({message: "Error while fetching data from DB"});
+            res.send({message: "Error while fetching user data from DB"});
         });
+
+        let company_info = {}
+        if(agent?.company_id){
+            company_info = await CompanyInfo.findOne({
+                _id: agent?.company_id
+            }).catch(err => {
+                console.log(err);
+                res.status(500);
+                res.send({message: "Error while fetching company data from DB"});
+            })
+        }
         
         res.send({
             first_name: agent?.first_name,
             last_name: agent?.last_name,
             email: agent?.email,
             phone: agent?.phone,
+            company_info: {
+                business_name: company_info.business_name,
+                logo_url: company_info.logo_url,
+                business_email: company_info.business_email,
+                business_phone: company_info.business_phone,
+                business_facebook_link: company_info.business_facebook_link,
+                business_twitter_link: company_info.business_twitter_link,
+                business_instagram_link: company_info.business_instagram_link,
+            }
         });
     } catch (e) {
         console.log(e);
