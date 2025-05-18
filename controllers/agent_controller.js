@@ -59,7 +59,8 @@ const addAgentSettings = async (req, res, next) => {
                 _id: _info._id,
                 user_id: _info.user_id,
                 property: _info.property,
-                value: _info.value
+                value: _info.value,
+                was_updated_status: was_updated_status
             });
             return;
         }
@@ -176,6 +177,7 @@ const getBasicPublicAgentInfo = async (req, res, next) => {
             last_name: agent?.last_name,
             email: agent?.email,
             phone: agent?.phone,
+            website_url: (agent?.website_url || ""),
             company_info: {
                 business_name: company_info.business_name,
                 logo_url: company_info.logo_url,
