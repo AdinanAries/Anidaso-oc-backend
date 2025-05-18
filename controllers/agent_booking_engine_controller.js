@@ -56,6 +56,13 @@ const add_agent_booking_engine = async (req, res, next) => {
             homePageSearchInputBorderColor,
             homePageSearchInputborderRadius,
             homePageSearchInputTextColor,
+            homePageSearchFormProductTypeSelectorActiveBackground,
+            homePageSearchFormProductTypeSelectorBackground,
+            homePageSearchFormProductTypeSelectorActiveTextColor,
+            homePageSearchFormProductTypeSelectorTextColor,
+            homePageSearchFormProductTypeSelectorActiveIcon,
+            homePageSearchFormProductTypeSelectorIcon,
+            homePageSearchFormProducttypeSelectorBorderRadius,
         } = req.body;
 
         if(!oc_user_id){
@@ -105,7 +112,14 @@ const add_agent_booking_engine = async (req, res, next) => {
             !homePageSearchInputIconColor ||
             !homePageSearchInputBorderColor ||
             homePageSearchInputborderRadius===undefined ||
-            !homePageSearchInputTextColor
+            !homePageSearchInputTextColor ||
+            !homePageSearchFormProductTypeSelectorActiveBackground ||
+            !homePageSearchFormProductTypeSelectorBackground ||
+            !homePageSearchFormProductTypeSelectorActiveTextColor ||
+            !homePageSearchFormProductTypeSelectorTextColor ||
+            !homePageSearchFormProductTypeSelectorActiveIcon ||
+            !homePageSearchFormProductTypeSelectorIcon ||
+            homePageSearchFormProducttypeSelectorBorderRadius===undefined
         ){
             res.status(400);
             res.send({message: "all fields are required!"});
@@ -163,6 +177,13 @@ const add_agent_booking_engine = async (req, res, next) => {
                 homePageSearchInputBorderColor,
                 homePageSearchInputborderRadius,
                 homePageSearchInputTextColor,
+                homePageSearchFormProductTypeSelectorActiveBackground,
+                homePageSearchFormProductTypeSelectorBackground,
+                homePageSearchFormProductTypeSelectorActiveTextColor,
+                homePageSearchFormProductTypeSelectorTextColor,
+                homePageSearchFormProductTypeSelectorActiveIcon,
+                homePageSearchFormProductTypeSelectorIcon,
+                homePageSearchFormProducttypeSelectorBorderRadius,
             });
             if (__updated.matchedCount === 0) {
                 // No document matching the filter was found
@@ -226,6 +247,13 @@ const add_agent_booking_engine = async (req, res, next) => {
                 homePageSearchInputBorderColor: beExists.homePageSearchInputBorderColor,
                 homePageSearchInputborderRadius: beExists.homePageSearchInputborderRadius,
                 homePageSearchInputTextColor: beExists.homePageSearchInputTextColor,
+                homePageSearchFormProductTypeSelectorActiveBackground: beExists.homePageSearchFormProductTypeSelectorActiveBackground,
+                homePageSearchFormProductTypeSelectorBackground: beExists.homePageSearchFormProductTypeSelectorBackground,
+                homePageSearchFormProductTypeSelectorActiveTextColor: beExists.homePageSearchFormProductTypeSelectorActiveTextColor,
+                homePageSearchFormProductTypeSelectorTextColor: beExists.homePageSearchFormProductTypeSelectorTextColor,
+                homePageSearchFormProductTypeSelectorActiveIcon: beExists.homePageSearchFormProductTypeSelectorActiveIcon,
+                homePageSearchFormProductTypeSelectorIcon: beExists.homePageSearchFormProductTypeSelectorIcon,
+                homePageSearchFormProducttypeSelectorBorderRadius: beExists.homePageSearchFormProducttypeSelectorBorderRadius,
                 was_updated_status: was_updated_status,
             });
             return;
@@ -275,6 +303,13 @@ const add_agent_booking_engine = async (req, res, next) => {
             homePageSearchInputBorderColor,
             homePageSearchInputborderRadius,
             homePageSearchInputTextColor,
+            homePageSearchFormProductTypeSelectorActiveBackground,
+            homePageSearchFormProductTypeSelectorBackground,
+            homePageSearchFormProductTypeSelectorActiveTextColor,
+            homePageSearchFormProductTypeSelectorTextColor,
+            homePageSearchFormProductTypeSelectorActiveIcon,
+            homePageSearchFormProductTypeSelectorIcon,
+            homePageSearchFormProducttypeSelectorBorderRadius,
         });
         be.save().then((result) => {
             console.log(result)
@@ -322,6 +357,13 @@ const add_agent_booking_engine = async (req, res, next) => {
                 homePageSearchInputBorderColor: result.homePageSearchInputBorderColor,
                 homePageSearchInputborderRadius: result.homePageSearchInputborderRadius,
                 homePageSearchInputTextColor: result.homePageSearchInputTextColor,
+                homePageSearchFormProductTypeSelectorActiveBackground: result.homePageSearchFormProductTypeSelectorActiveBackground,
+                homePageSearchFormProductTypeSelectorBackground: result.homePageSearchFormProductTypeSelectorBackground,
+                homePageSearchFormProductTypeSelectorActiveTextColor: result.homePageSearchFormProductTypeSelectorActiveTextColor,
+                homePageSearchFormProductTypeSelectorTextColor: result.homePageSearchFormProductTypeSelectorTextColor,
+                homePageSearchFormProductTypeSelectorActiveIcon: result.homePageSearchFormProductTypeSelectorActiveIcon,
+                homePageSearchFormProductTypeSelectorIcon: result.homePageSearchFormProductTypeSelectorIcon,
+                homePageSearchFormProducttypeSelectorBorderRadius: result.homePageSearchFormProducttypeSelectorBorderRadius,
             });
         }).catch((err) => {
             console.log(err);

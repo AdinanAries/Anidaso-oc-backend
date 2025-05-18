@@ -172,6 +172,34 @@ const agentBookingEngineSchema = new Schema({
         type: String,
         required: [true, "Please add homePageSearchInputTextColor field"]
     },
+    homePageSearchFormProductTypeSelectorActiveBackground: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorActiveBackground field"]
+    },
+    homePageSearchFormProductTypeSelectorBackground: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorBackground field"]
+    },
+    homePageSearchFormProductTypeSelectorActiveTextColor: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorActiveTextColor field"]
+    },
+    homePageSearchFormProductTypeSelectorTextColor: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorTextColor field"]
+    },
+    homePageSearchFormProductTypeSelectorActiveIcon: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorActiveIcon field"]
+    },
+    homePageSearchFormProductTypeSelectorIcon: {
+        type: String,
+        required: [true, "Please add homePageSearchFormProductTypeSelectorIcon field"]
+    },
+    homePageSearchFormProducttypeSelectorBorderRadius: {
+        type: Number,
+        required: [true, "Please add homePageSearchFormProducttypeSelectorBorderRadius field"]
+    },
 },
 {
     timestamps: true
