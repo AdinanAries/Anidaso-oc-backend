@@ -36,8 +36,25 @@ const addAgentSettings = async (req, res, next) => {
         const infoExists = await AgentInfo.findOne({user_id, property});
 
         if(infoExists) {
+            let was_updated_status = "";
             res.status(201);
             let _info = await AgentInfo.updateOne({user_id, property}, {value});
+            if (_info.matchedCount === 0) {
+                // No document matching the filter was found
+                console.log("Agent settings was not found during update!");
+                was_updated_status="Agent settings was not found during update!";
+                return
+            } else if (_info.modifiedCount === 0) {
+                // A document was matched, but not modified (e.g., the update didn't change any values)
+                console.log("Agent settings already exists however failed on update!");
+                was_updated_status="Agent settings already exists however failed on update!";
+                return;
+            }else {
+                console.log("Agent settings already exists and was updated!");
+                was_updated_status="Agent settings already exists and was updated!";
+                // Fetching new updated record
+                _info = await AgentInfo.findOne({user_id, property});
+            }
             res.send({
                 _id: _info._id,
                 user_id: _info.user_id,

@@ -99,7 +99,7 @@ const addBookingLink = async (req, res, next) => {
         }
 
         // Check if booking link exists
-        const linkExists = await BookingLink.findOne({
+        let linkExists = await BookingLink.findOne({
             oc_user_id,
             client_app_url,
             product,
@@ -135,6 +135,8 @@ const addBookingLink = async (req, res, next) => {
             }else {
                 console.log("Booking link already exists and was updated!");
                 was_updated_status="Booking link already exists and was updated!";
+                // Fetching new updated record
+                linkExists = await BookingLink.findOne({_id: linkExists?._id});
             }
             res.send({
                 _id: linkExists._id,

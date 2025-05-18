@@ -79,6 +79,8 @@ const signup = asyncHandler(async (req, res, next) => {
             email: email,
             role_id: usr_role._id,
             password: hashedPassword,
+            company_id: "",
+            website_url: "",
             make_new_password: true
         });
         user.save().then(async (result) => {
@@ -120,6 +122,8 @@ const signup = asyncHandler(async (req, res, next) => {
 
             res.status(201).send({
                 _id: result._id,
+                company_id: result.company_id,
+                website_url: result.website_url,
                 first_name: result.first_name,
                 middle_name: result.middle_name,
                 last_name: result.last_name,
@@ -221,6 +225,7 @@ const login = asyncHandler(async (req, res, next) => {
             res.status(201).send({
                 _id: user._id,
                 company_id: user.company_id,
+                website_url: user.website_url,
                 first_name: user.first_name,
                 middle_name: user.middle_name,
                 last_name: user.last_name,
@@ -302,6 +307,7 @@ const getUserDetails = (req, res, next) => {
         res.status(200).send({
             _id: user._id,
             company_id: user.company_id,
+            website_url: user.website_url,
             first_name: user.first_name,
             middle_name: user.middle_name,
             last_name: user.last_name,
@@ -384,6 +390,7 @@ const getUserDetailsByID = (req, res, next) => {
             res.status(200).send({
                 _id: user._id,
                 company_id: user.company_id,
+                website_url: user.website_url,
                 first_name: user.first_name,
                 middle_name: user.middle_name,
                 last_name: user.last_name,
@@ -455,6 +462,7 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
             role_id,
             make_new_password,
             company_id,
+            website_url,
         } = req.body;
 
         if(
@@ -494,12 +502,14 @@ const updateUserDetails = asyncHandler( async (req, res, next) => {
         user.password=password;
         user.make_new_password=make_new_password;
         user.company_id=company_id;
+        user.website_url=website_url;
 
         const user_updated = new User(user);
         user_updated.save().then((result) => {
             res.status(201).send({
                 _id: result._id,
                 company_id: result.company_id,
+                website_url: result.website_url,
                 first_name: result.first_name,
                 middle_name: result.middle_name,
                 last_name: result.last_name,

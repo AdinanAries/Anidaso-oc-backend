@@ -48,9 +48,13 @@ const userSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserRole' 
     },
+    website_url: {
+        type: String,
+        required: false
+    },
     imageUrl: {
-    type: String,
-    required: false
+        type: String,
+        required: false
    }
 },
 {

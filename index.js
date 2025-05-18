@@ -39,6 +39,7 @@ app.use("/api/wallets", require("./routes/wallet_routes"));
 app.use("/api/customers", require("./routes/customers_routes"));
 app.use("/api/booking-engine", require("./routes/agent_booking_engine_routes"));
 app.use("/api/company-info", require("./routes/company_info_routes"));
+app.use("/api/service-fee", require("./routes/agent_service_fee_routes"));
 
 // Local Utilities
 const check_is_cust_prod_db = () => {
