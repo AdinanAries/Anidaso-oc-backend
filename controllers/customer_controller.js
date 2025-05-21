@@ -27,6 +27,7 @@ const get_customers_of_agent = async (req, res, next) => {
         let total_items = await Customer.count({oc_user_id: user_id, deleted: false}).catch(err => {
             console.log(err);
             res.send([]);
+            return;
         });
 
         res.set("Pagination-Total-Items", total_items);
@@ -34,6 +35,7 @@ const get_customers_of_agent = async (req, res, next) => {
         let _customers = await Customer.find({oc_user_id: user_id, deleted: false}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
+            return;
         });
         
         res.send(_customers);
@@ -200,7 +202,66 @@ const add_customer = async (req, res, next) => {
     }
 };
 
+/**
+ * 
+ */
+const search_customer_of_agent = async(req, res, next) => {
+    try{
+        const user_id = req.params.oc_user_id;
+        let q = req.params.query;
+        let offset = parseInt(req.params.offset);
+        --offset; //offset starts from 0 as of array indexes
+        let limit = parseInt(req.params.limit);
+
+        if(!user_id){
+            res.status(400);
+            res.send({message: "oc_user_id field is required!"});
+            return;
+        }
+
+        let q2 = q;
+        if(q.trim().includes(" ")){
+            const _q = q.trim().split(" ");
+            q = _q[0];
+            q2 = _q[1];
+        }
+
+        const search_obj = {
+            oc_user_id: user_id, 
+            deleted: false,
+            $or: [
+                {first_name: { $regex : q, $options: 'i'}},
+                {last_name: { $regex : q2, $options: 'i'}},
+                {email: { $regex : q, $options: 'i'}},
+                {phone: { $regex : q, $options: 'i'}}
+            ]
+        }
+
+        let total_items = await Customer.count(search_obj).catch(err => {
+            console.log(err);
+            res.send([]);
+            return;
+        });
+
+        res.set("Pagination-Total-Items", total_items);
+
+        let _customers = await Customer.find(search_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+            console.log(err);
+            res.send([]);
+            return;
+        });
+        
+        res.send(_customers);
+
+    }catch(e){
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
+} 
+
 module.exports = {
     add_customer,
     get_customers_of_agent,
+    search_customer_of_agent,
 }
