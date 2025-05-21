@@ -24,14 +24,14 @@ const get_customers_of_agent = async (req, res, next) => {
             return;
         }
 
-        let total_items = await Customer.count({oc_user_id: user_id}).catch(err => {
+        let total_items = await Customer.count({oc_user_id: user_id, deleted: false}).catch(err => {
             console.log(err);
             res.send([]);
         });
 
         res.set("Pagination-Total-Items", total_items);
 
-        let _customers = await Customer.find({oc_user_id: user_id}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        let _customers = await Customer.find({oc_user_id: user_id, deleted: false}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });
@@ -68,6 +68,11 @@ const add_customer = async (req, res, next) => {
             zip_code,
         } = req.body;
 
+        const __id = (req?.body?._id || "");
+
+        let _deleted = (req?.body?.deleted || false);
+        was_updated_status="";
+
         if(
             !first_name ||
             !last_name ||
@@ -76,6 +81,66 @@ const add_customer = async (req, res, next) => {
             res.status(400);
             res.send({message: "first and last names and email are required!"});
             return;
+        }
+
+        // Items with Id already exists
+        if(__id){
+
+            // Check if service fee exists 
+            let customerExists = await Customer.findOne({_id: __id});
+
+            if(customerExists) {
+                res.status(201);
+                let __updated = await Customer.updateOne({_id: __id}, {
+                    oc_user_id,
+                    first_name,
+                    last_name,
+                    email,
+                    phone,
+                    dob,
+                    gender,
+                    address,
+                    city,
+                    state,
+                    country,
+                    zip_code,
+                    deleted: _deleted
+                });
+                if (__updated.matchedCount === 0) {
+                    // No document matching the filter was found
+                    console.log("Customer was not found during update!");
+                    was_updated_status="Customer was not found during update!";
+                    return
+                } else if (__updated.modifiedCount === 0) {
+                    // A document was matched, but not modified (e.g., the update didn't change any values)
+                    console.log("Customer already exists however failed on update!");
+                    was_updated_status="Customer already exists however failed on update!";
+                    return;
+                }else {
+                    console.log("Customer already exists and was updated!");
+                    was_updated_status="Customer already exists and was updated!";
+                    // Fetching newly updated record
+                    customerExists = await Customer.findOne({_id: __id});
+                }
+                res.send({
+                    _id: customerExists?._id,
+                    oc_user_id: customerExists.oc_user_id,
+                    first_name: customerExists.first_name,
+                    last_name: customerExists.last_name,
+                    email: customerExists.email,
+                    phone: customerExists.phone,
+                    dob: customerExists.dob,
+                    gender: customerExists.gender,
+                    address: customerExists.address,
+                    city: customerExists.city,
+                    state: customerExists.state,
+                    country: customerExists.country,
+                    zip_code: customerExists.zip_code,
+                    deleted: customerExists.deleted,
+                    was_updated_status: was_updated_status
+                });
+                return;
+            }
         }
 
         // Check if customer exists
@@ -104,6 +169,7 @@ const add_customer = async (req, res, next) => {
             state,
             country,
             zip_code,
+            deleted: _deleted
         });
         _customer.save().then((result) => {
             res.status(201).send({
@@ -120,6 +186,7 @@ const add_customer = async (req, res, next) => {
                 state: result.state,
                 country: result.country,
                 zip_code: result.zip_code,
+                deleted: result.deleted
             });
         }).catch((err) => {
             console.log(err);
