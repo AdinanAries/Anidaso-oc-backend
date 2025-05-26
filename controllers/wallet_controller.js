@@ -132,6 +132,16 @@ const get_transaction_types = (req, res, next) => {
 const get_transactions_of_agent = async (req, res, next) => {
 
     try{
+
+        const {
+            product,
+            trans_type,
+            title,
+            time_intervals
+        } = req.body?.filters;
+
+        console.log(req.body?.filters);
+
         const wallet_id = req.params.wallet_id;
         let offset = parseInt(req.params.offset);
         --offset; //offset starts from 0 as of array indexes

@@ -13,6 +13,15 @@ const {
 const get_agent_booking_links = async (req, res, next) => {
 
     try{
+
+        const {
+            product,
+            trip_round,
+            origin_airport,
+            destination_airport,
+            time_intervals,
+        } = req.body?.filters;
+
         const user_id = req.params.oc_user_id;
         let offset = parseInt(req.params.offset);
         --offset; //offset starts from 0 as of array indexes
@@ -24,14 +33,39 @@ const get_agent_booking_links = async (req, res, next) => {
             return;
         }
 
-        let total_items = await BookingLink.count({oc_user_id: user_id}).catch(err => {
+        const search_obj = {
+            oc_user_id: user_id
+        }
+
+        // Adding Filters
+        if(product!==undefined && parseInt(product)!==-1){
+            search_obj.product = product;
+        }
+
+        if(trip_round && trip_round!=="all"){
+            search_obj.trip_type = trip_round;
+        }
+
+        if(origin_airport){
+
+        }
+
+        if(destination_airport){
+
+        }
+
+        if(time_intervals){
+
+        }
+
+        let total_items = await BookingLink.count(search_obj).catch(err => {
             console.log(err);
             res.send([]);
         });
 
         res.set("Pagination-Total-Items", total_items);
 
-        let booking_links = await BookingLink.find({oc_user_id: user_id}).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        let booking_links = await BookingLink.find(search_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
         });

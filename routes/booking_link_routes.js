@@ -11,7 +11,7 @@ const {
 } = require("../controllers/booking_link_controller");
 
 // routes
-router.get("/agent/all/:oc_user_id/:offset/:limit", protect, get_agent_booking_links);
+router.post("/agent/all/:oc_user_id/:offset/:limit", protect, get_agent_booking_links);
 router.post("/create/", protect, addBookingLink);
 
 module.exports = router;
