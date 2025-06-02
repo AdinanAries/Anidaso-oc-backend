@@ -2,6 +2,7 @@ const CONSTANTS = require("../constants");
 const {
     User,
     AgentInfo,
+    CompanyInfo,
     UserRole,
     RolePrivilege,
     ApplicationPage, 
@@ -268,7 +269,7 @@ const getUserDetails = (req, res, next) => {
             role_info = await UserRole.findOne({_id: user?.role_id});
         }
 
-        //Getting User Privileges
+        // Getting User Privileges
         let role_priv={}
         if(role_info?.privilege_id){
             role_priv = await RolePrivilege.findOne({_id: role_info?.privilege_id});
@@ -299,9 +300,12 @@ const getUserDetails = (req, res, next) => {
         // Getting Wallet and Agent Info For Agent User
         let agent_info = [];
         let wallet_info = {};
+        let company_info = {};
         if(role_info?.constant===CONSTANTS.app_role_constants.agent){
             agent_info = await AgentInfo.find({user_id: user._id});
             wallet_info = await Wallet.findOne({oc_user_id: user._id});
+            if(user.company_id)
+                company_info = await CompanyInfo.findOne({_id: user.company_id});
         }
 
         res.status(200).send({
@@ -321,6 +325,7 @@ const getUserDetails = (req, res, next) => {
             role_info: role_info,
             wallet_info: wallet_info,
             agent_info: agent_info,
+            company_info: company_info,
             priv_info: role_priv,
             pages_can_access_info: pages_can_access_info,
             resources_can_access_info: resources_can_access_info,
@@ -382,9 +387,12 @@ const getUserDetailsByID = (req, res, next) => {
             // Getting Agent Info For Agent User
             let agent_info = [];
             let wallet_info = {};
+            let company_info = {};
             if(role_info?.constant===CONSTANTS.app_role_constants.agent){
                 agent_info = await AgentInfo.find({user_id: user._id});
                 wallet_info = await Wallet.findOne({oc_user_id: user._id});
+                if(user.company_id)
+                    company_info = await CompanyInfo.findOne({_id: user.company_id});
             }
 
             res.status(200).send({
@@ -405,6 +413,7 @@ const getUserDetailsByID = (req, res, next) => {
                 role_info: role_info,
                 wallet_info: wallet_info,
                 agent_info: agent_info,
+                company_info: company_info,
                 priv_info: role_priv,
                 pages_can_access_info: pages_can_access_info,
                 resources_can_access_info: resources_can_access_info,
