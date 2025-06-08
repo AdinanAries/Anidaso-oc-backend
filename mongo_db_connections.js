@@ -25,6 +25,7 @@ const agentBookingEngineSchema = require("./models/agentBookingEngine");
 const companyInfoSchema = require("./models/companyInfo");
 const agentServiceFeeSchema = require("./models/agentServiceFee");
 const ocActivityLogSchema = require("./models/ocActivityLog");
+const newsLetterSchema = require("./models/newsLetter");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -74,6 +75,7 @@ const AgentBookingEngine = welldugo_oc_conn.model("AgentBookingEngine", agentBoo
 const CompanyInfo = welldugo_oc_conn.model("CompanyInfo", companyInfoSchema);
 const AgentServiceFee = welldugo_oc_conn.model("AgentServiceFee", agentServiceFeeSchema);
 const OcActivityLog = welldugo_oc_conn.model("OcActivityLog", ocActivityLogSchema);
+const NewsLetter = welldugo_oc_conn.model("NewsLetter", newsLetterSchema);
 
 module.exports = {
     BookingHistory,
@@ -100,6 +102,7 @@ module.exports = {
     CompanyInfo,
     AgentServiceFee,
     OcActivityLog,
+    NewsLetter,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,
