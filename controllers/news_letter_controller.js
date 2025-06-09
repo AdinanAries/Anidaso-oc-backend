@@ -104,24 +104,31 @@ const saveNewsLetter = async (req, res, next) => {
  * @param {Function} next
  * @access Private
  */
-const getSavedNewsLetter = (req, res, next) => {
+const getSavedNewsLetter = async (req, res, next) => {
     try{
         const oc_user_id=req.params.oc_user_id;
         const template_name=req.params.template_name;
-        NewsLetter.findOne({
+        let nl = await NewsLetter.findOne({
             oc_user_id,
             template_name
-        }).then(async(nl) => {
+        }).catch(err => {
+            console.log(err);
+            res.status(500);
+            res.send({message: "Error while fetching data from DB"});
+            return;
+        });
+        if(nl){
             res.status(200).send({
                 _id: nl._id,
                 oc_user_id: nl.oc_user_id,
                 template_name: nl.template_name,
                 saved_state: nl.saved_state
             });
-        }).catch((err) => {
-            console.log(err);
-            res.status(500).send({message: "Server Error"});
-        }); 
+            return;
+        }else{
+            res.status(200).send({});
+        }
+        
     } catch (err) {
         console.log(err);
         res.status(500).send({message: "Server Error"});
