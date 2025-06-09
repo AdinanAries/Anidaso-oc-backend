@@ -78,7 +78,6 @@ const saveNewsLetter = async (req, res, next) => {
             saved_state
         });
         nl.save().then((result) => {
-            console.log(result)
             res.status(201).send({
                 _id: result._id,
                 oc_user_id: result.oc_user_id,
