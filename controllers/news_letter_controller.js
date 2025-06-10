@@ -3,6 +3,11 @@ const {
     NewsLetter,
 } = require("../mongo_db_connections");
 
+//utils
+const {
+    send_email,
+} = require("../Email");
+
 
 /**
  * @desc Saves News Letter
@@ -78,7 +83,6 @@ const saveNewsLetter = async (req, res, next) => {
             saved_state
         });
         nl.save().then((result) => {
-            console.log(result)
             res.status(201).send({
                 _id: result._id,
                 oc_user_id: result.oc_user_id,
@@ -135,7 +139,38 @@ const getSavedNewsLetter = async (req, res, next) => {
     }
 }
 
+/**
+ * @desc Sends Newsletter Emails
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next
+ * @access Private
+ */
+const sendNewsLetterEmail = async (req, res, next) => {
+    try{
+        const {
+            to,
+            from,
+            subject,
+            text,
+            html
+        } = req.body;
+        const send_obj = {
+            to: to,
+            from: from,
+            subject: subject,
+            text: text,
+            html: html,
+        };
+        send_email(send_obj);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({message: "Server Error"});
+    }
+}
+
 module.exports = {
     saveNewsLetter,
     getSavedNewsLetter,
+    sendNewsLetterEmail,
 }
