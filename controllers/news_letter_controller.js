@@ -162,7 +162,7 @@ const sendNewsLetterEmail = async (req, res, next) => {
             text: text,
             html: html,
         };
-        let __res = send_email(send_obj);
+        let __res = await send_email(send_obj);
         res.status(200).send(__res);
     } catch (err) {
         console.log(err);
