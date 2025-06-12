@@ -153,7 +153,8 @@ const sendNewsLetterEmail = async (req, res, next) => {
             from,
             subject,
             text,
-            html
+            html,
+            attachments,
         } = req.body;
         const send_obj = {
             to: to,
@@ -161,6 +162,7 @@ const sendNewsLetterEmail = async (req, res, next) => {
             subject: subject,
             text: text,
             html: html,
+            attachments: attachments,
         };
         let __res = await send_email(send_obj);
         res.status(200).send(__res);
