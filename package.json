@@ -19,7 +19,8 @@
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^5.13.8",
-    "mongoose-type-url": "^2.1.0"
+    "mongoose-type-url": "^2.1.0",
+    "stripe": "^18.2.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"
