@@ -13,11 +13,13 @@ const {
     get_transactions_of_agent,
     add_visited_link_of_agent,
     add_booked_link_of_agent,
+    update_agent_wallet
 } = require("../controllers/wallet_controller");
 
 // routes
 router.get("/agent/transaction/wallet/:id", protect, getWalletByID);
 router.post("/agent/create/", protect, add_agent_wallet);
+router.post("/agent/update/", protect, update_agent_wallet);
 router.post("/agent/transaction/all/:wallet_id/:offset/:limit", protect, get_transactions_of_agent);
 router.get("/agent/transaction/type/all/", get_transaction_types);
 router.post("/agent/transaction/create/", add_transaction_of_agent);

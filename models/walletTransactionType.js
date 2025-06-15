@@ -26,7 +26,7 @@ const walletTransactionTypeSchema = new Schema({
     },
     constant: { // Constants for matching privilege actions with resources
         type: Number,
-        required: [true, "Please add constant number: 1=>Sear, 2=>Form, 3=>Analytics, ..."],
+        required: [true, "Please add constant number: 1=>Wallet Top-up, 2=>Link Created/Loaded, 3=>Customer Opened Link, ..."],
         unique: true,
     }
 },

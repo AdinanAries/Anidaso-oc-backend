@@ -61,11 +61,15 @@ const addAgentServiceFee = async (req, res, next) => {
                     // No document matching the filter was found
                     console.log("Service fee was not found during update!");
                     was_updated_status="Service fee was not found during update!";
+                    res.status(400);
+                    res.send({message: was_updated_status});
                     return
                 } else if (__updated.modifiedCount === 0) {
                     // A document was matched, but not modified (e.g., the update didn't change any values)
                     console.log("Service fee already exists however failed on update!");
                     was_updated_status="Service fee already exists however failed on update!";
+                    res.status(400);
+                    res.send({message: was_updated_status});
                     return;
                 }else {
                     console.log("Service fee already exists and was updated!");

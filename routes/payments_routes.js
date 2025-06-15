@@ -7,11 +7,11 @@ const { protect } = require("../middlewares/authMiddleware");
 // controllers
 const {
     create_subscription,
-    process_payment,
+    create_payment_intent,
 } = require("../controllers/payments_controller");
 
 // routes
 router.post("/create-subscription/", protect, create_subscription);
-router.post("/process-payment/", protect, process_payment);
+router.post("/create-payment-intent/", protect, create_payment_intent);
 
 module.exports = router;

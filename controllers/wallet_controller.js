@@ -71,6 +71,163 @@ const add_agent_wallet = async (req, res, next) => {
 };
 
 /**
+ * @desc Update Agent Wallet, e.g. Adding balance
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @access Protected
+ */
+const update_agent_wallet = async (req, res, next) => {
+    try{
+        let {
+            oc_user_id,
+            new_balance,
+            balance_currency
+        } = req.body;
+
+        if(!oc_user_id){
+            res.status(400);
+            res.send({message: "user-id field is required!"});
+            return;
+        }
+
+        if(!new_balance){
+            new_balance=0;
+        }
+
+        let wallet_balance_before=0;
+        let wallet_balance_after=new_balance;
+        let was_updated_status="";
+        // Check if wallet already exists for this agent
+        let transaction = null;
+        let wallet = await Wallet.findOne({
+            oc_user_id,
+        });
+
+        if(wallet) {
+            let __updated_balance = (parseFloat(new_balance)+wallet?.current_balance);
+            wallet_balance_before=wallet?.current_balance;
+            wallet_balance_after=__updated_balance;
+            let __updated = await Wallet.updateOne({_id: wallet?._id}, {
+                oc_user_id,
+                last_top_up_date: new Date().toUTCString(),
+                current_balance: __updated_balance,
+                balance_currency
+            });
+            if (__updated.matchedCount === 0) {
+                // No document matching the filter was found
+                was_updated_status="Wallet was not found during update!";
+                res.status(400);
+                res.send({message: was_updated_status});
+                return
+            } else if (__updated.modifiedCount === 0) {
+                // A document was matched, but not modified (e.g., the update didn't change any values)
+                was_updated_status="Wallet already exists however failed on update!";
+                res.status(400);
+                res.send({message: was_updated_status});
+                return;
+            }else {
+                was_updated_status="Wallet already exists and was updated!";
+                // Fetching newly updated record
+                wallet = await Wallet.findOne({_id: wallet?._id});
+            }
+            
+        }else{
+            // Create new agent wallet
+            let _wallet = new Wallet({
+                oc_user_id,
+                last_top_up_date: new Date().toUTCString(),
+                current_balance: new_balance,
+                balance_currency
+            });
+            _wallet.save().then((result) => {
+                wallet = result;
+            }).catch((err) => {
+                console.log(err);
+                res.status(500);
+                res.send({message: 'Wallet could not be created'});
+                return;
+            });
+        }
+
+        // Create associated transaction
+
+        // Get transaction type information by constant
+        const wallet_top_up_trans_type_constant=1;
+        let transaction_type_id = "";
+        let total_amount = 0;
+        let total_action_points = 0;
+        let _trans_type = await WalletTransactionType.findOne({constant: wallet_top_up_trans_type_constant});
+        if(_trans_type?._id){
+            transaction_type_id = _trans_type?._id;
+            total_amount = _trans_type?.unit_cost; // To do Change to the right transaction amount based on wallet top-up
+            total_action_points = (_trans_type?.unit_action_point); // To do: Change to determine by agents current service contract
+            //type
+            //title,
+            //cost_currency,
+            //constant
+        }
+        if(wallet && new_balance){
+            const _transaction = new WalletTransaction({
+                wallet_id: wallet?._id,
+                transaction_type_id,
+                total_amount,
+                total_action_points,
+                description: `Balace Top-Up Of ${new_balance} was added to your account`,
+                wallet_balance_before,
+                wallet_balance_after
+            });
+            _transaction.save().then(async(result) => {
+                transaction = result;
+            }).catch((err) => {
+                console.log(err);
+                res.status(500);
+                res.send({message: 'Wallet transaction could not be created'});
+                return;
+            });
+        }
+
+        if(wallet && transaction) {
+            res.status(201);
+            res.send({
+                _id: wallet._id,
+                oc_user_id: wallet.oc_user_id,
+                last_top_up_date: wallet.last_top_up_date,
+                current_balance: wallet.current_balance,
+                balance_currency: wallet.balance_currency,
+                was_updated_status,
+                associated_transaction: {
+                    _id: transaction._id,
+                    wallet_id: transaction.wallet_id,
+                    transaction_type_id: transaction.transaction_type_id,
+                    total_amount: transaction.total_amount,
+                    total_action_points: transaction.total_action_points,
+                    description: transaction.description,
+                }
+            });
+        } else if(wallet){
+            res.status(201);
+            res.send({
+                _id: wallet._id,
+                oc_user_id: wallet.oc_user_id,
+                last_top_up_date: wallet.last_top_up_date,
+                current_balance: wallet.current_balance,
+                balance_currency: wallet.balance_currency,
+                was_updated_status,
+            });
+        } else {
+            res.status(400);
+            res.send({message: "Wallet and associated transaction was not created/updated successfuly"});
+        }
+
+    }catch(e){
+        console.log(e);
+        res.status(500);
+        res.send({message: "Server error"});
+    }
+};
+
+/**
  * @desc Get Agent Wallet By ID
  * @param {Object} req 
  * @param {Object} res 
@@ -672,4 +829,5 @@ module.exports = {
     add_transaction_of_agent,
     get_transactions_of_agent,
     add_booked_link_of_agent,
+    update_agent_wallet,
 }

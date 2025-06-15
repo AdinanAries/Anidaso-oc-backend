@@ -64,17 +64,37 @@ const create_subscription = async (req, res, next) => {
 };
 
 /**
- * @desc Processes Strip Payment
+ * @desc Creates Strip Payment Intent
  * @param {Object} req 
  * @param {Object} res 
  * @param {Function} next 
  * @access Protected
  */
-const process_payment = async (req, res, next) => {
+const create_payment_intent = async (req, res, next) => {
+    try {
+        const { 
+            amount, 
+            currency 
+        } = req.body;
 
+        const strp_amount = (parseFloat(amount)*100);
+
+        // Create a PaymentIntent
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: strp_amount, // Amount in cents (e.g., $10.00 = 1000)
+            currency, // e.g., 'usd'
+            payment_method_types: ['card'], // Specify payment methods
+        });
+
+        res.status(200).send({
+            clientSecret: paymentIntent.client_secret, // Send client secret to the client
+        });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
 };
 
 module.exports = {
     create_subscription,
-    process_payment,
+    create_payment_intent,
 }
