@@ -140,14 +140,7 @@ const update_agent_wallet = async (req, res, next) => {
                 current_balance: new_balance,
                 balance_currency
             });
-            _wallet.save().then((result) => {
-                wallet = result;
-            }).catch((err) => {
-                console.log(err);
-                res.status(500);
-                res.send({message: 'Wallet could not be created'});
-                return;
-            });
+            wallet = await _wallet.save();
         }
 
         // Create associated transaction
@@ -177,14 +170,7 @@ const update_agent_wallet = async (req, res, next) => {
                 wallet_balance_before,
                 wallet_balance_after
             });
-            _transaction.save().then(async(result) => {
-                transaction = result;
-            }).catch((err) => {
-                console.log(err);
-                res.status(500);
-                res.send({message: 'Wallet transaction could not be created'});
-                return;
-            });
+            transaction = await _transaction.save();
         }
 
         if(wallet && transaction) {
@@ -205,6 +191,7 @@ const update_agent_wallet = async (req, res, next) => {
                     description: transaction.description,
                 }
             });
+            return;
         } else if(wallet){
             res.status(201);
             res.send({
@@ -215,6 +202,7 @@ const update_agent_wallet = async (req, res, next) => {
                 balance_currency: wallet.balance_currency,
                 was_updated_status,
             });
+            return;
         } else {
             res.status(400);
             res.send({message: "Wallet and associated transaction was not created/updated successfuly"});
