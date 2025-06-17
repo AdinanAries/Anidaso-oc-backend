@@ -94,7 +94,68 @@ const create_payment_intent = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc Getting Strip Customer by Email
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @access Protected
+ */
+const get_stripe_customer_by_email = async (req, res, next) => {
+
+    try {
+        
+        const {
+            email,
+        } = req.body;
+
+        const customers = await stripe.customers.list({
+            email: email,
+            limit: 1, // Assuming only one customer per email
+        });
+
+        if (customers.data.length > 0) {
+            res.status(200).send(customers.data[0]);
+            return;
+        } else {
+            res.status(200).send({});
+            return; // Customer not found
+        }
+        
+    } catch (error) {
+        res.status(400).send({ error: { message: error.message } });
+    }
+};
+
+/**
+ * @desc Getting Stripe Subscriptions by Customer-Id
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @access Protected
+ */
+const get_stripe_subscriptions_by_customer_id = async (req, res, next) => {
+
+    try {
+        const {
+            customer,
+        } = req.body;
+
+        const subscriptions = await stripe.subscriptions.list({
+            customer: customer.id,
+            status: 'all', // To retrieve all subscriptions including canceled ones, otherwise use 'active'
+        });
+
+        res.status(200).send(subscriptions.data);
+        return;
+    } catch (error) {
+        res.status(400).send({ error: { message: error.message } });
+    }
+};
+
 module.exports = {
     create_subscription,
     create_payment_intent,
+    get_stripe_customer_by_email,
+    get_stripe_subscriptions_by_customer_id,
 }
