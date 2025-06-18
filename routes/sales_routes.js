@@ -6,15 +6,12 @@ const { protect } = require("../middlewares/authMiddleware");
 
 // controllers
 const {
-    add_customer,
-    get_customers_of_agent,
-    search_customer_of_agent,
-} = require("../controllers/customer_controller");
+    get_all_sales,
+    get_monthly_sales,
+} = require("../controllers/sales_controller");
 
 // routes
-router.post("/agent/all/:oc_user_id/:offset/:limit", protect, get_customers_of_agent);
-router.get("/agent/each/:id", protect, search_customer_of_agent);
-router.get("/agent/totals/current-month", protect);
-router.post("/create/", protect, add_customer);
+router.post("/all/:oc_user_id/:offset/:limit", protect, get_all_sales);
+router.post("/group/monthly/:oc_user_id", protect, get_monthly_sales)
 
 module.exports = router;

@@ -9,6 +9,7 @@ const {
     ApplicationResource,
     CanAction,
     Wallet,
+    BookingIntentLog,
 } = require('../mongo_db_connections'); 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -301,12 +302,38 @@ const getUserDetails = (req, res, next) => {
         let agent_info = [];
         let wallet_info = {};
         let company_info = {};
+        let sales_search_obj = {};
         if(role_info?.constant===CONSTANTS.app_role_constants.agent){
+            sales_search_obj.oc_user_id=user._id.toString();
             agent_info = await AgentInfo.find({user_id: user._id});
             wallet_info = await Wallet.findOne({oc_user_id: user._id});
             if(user.company_id)
                 company_info = await CompanyInfo.findOne({_id: user.company_id});
         }
+
+        // Getting Last 12 Months Sales
+        let last_twelve_months_monthly_sales = await BookingIntentLog.aggregate([
+            {
+                $match: {
+                    ...sales_search_obj,
+                    payment_status: "succeeded",
+                    booking_status: "confirmed",
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, // Group by year and month
+                    documents: { $push: "$$ROOT" }, // Push the entire document into an array
+                    count: { $sum: 1 } // Count the number of documents in each group
+                }
+            },
+            {
+                $sort: { _id: -1 } // Sort by month in ascending order
+            },
+            {
+                $limit: 12, // Last 12 Months Only
+            }
+        ]);
 
         res.status(200).send({
             _id: user._id,
@@ -330,6 +357,7 @@ const getUserDetails = (req, res, next) => {
             pages_can_access_info: pages_can_access_info,
             resources_can_access_info: resources_can_access_info,
             resources_can_access_actions_info: resources_can_access_actions_info,
+            last_twelve_months_monthly_sales: last_twelve_months_monthly_sales,
             token: generateToken(user._id)
         });
     })
@@ -388,12 +416,38 @@ const getUserDetailsByID = (req, res, next) => {
             let agent_info = [];
             let wallet_info = {};
             let company_info = {};
+            let sales_search_obj = {};
             if(role_info?.constant===CONSTANTS.app_role_constants.agent){
+                sales_search_obj.oc_user_id=user._id.toString();
                 agent_info = await AgentInfo.find({user_id: user._id});
                 wallet_info = await Wallet.findOne({oc_user_id: user._id});
                 if(user.company_id)
                     company_info = await CompanyInfo.findOne({_id: user.company_id});
             }
+
+            // Getting Last 12 Months Sales
+            let last_twelve_months_monthly_sales = await BookingIntentLog.aggregate([
+                {
+                    $match: {
+                        ...sales_search_obj,
+                        payment_status: "succeeded",
+                        booking_status: "confirmed",
+                    }
+                },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } }, // Group by year and month
+                        documents: { $push: "$$ROOT" }, // Push the entire document into an array
+                        count: { $sum: 1 } // Count the number of documents in each group
+                    }
+                },
+                {
+                    $sort: { _id: -1 } // Sort by month in ascending order
+                },
+                {
+                    $limit: 12, // Last 12 Months Only
+                }
+            ]);
 
             res.status(200).send({
                 _id: user._id,
@@ -418,6 +472,7 @@ const getUserDetailsByID = (req, res, next) => {
                 pages_can_access_info: pages_can_access_info,
                 resources_can_access_info: resources_can_access_info,
                 resources_can_access_actions_info: resources_can_access_actions_info,
+                last_twelve_months_monthly_sales: last_twelve_months_monthly_sales,
                 token: generateToken(user._id)
             });
         }).catch((err) => {
