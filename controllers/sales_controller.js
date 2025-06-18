@@ -76,13 +76,17 @@ const get_all_sales = async (req, res, next) => {
     
         res.set("Pagination-Total-Items", total_items);
     
-        let bookings = await BookingHistory.find(search_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        let sales = await BookingIntentLog.find({
+            ...search_obj,
+            payment_status: "succeeded",
+            booking_status: "confirmed",
+        }).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
             return;
         });
         
-        res.send(bookings);
+        res.send(sales);
         
     }catch(e){
         console.log(e);
