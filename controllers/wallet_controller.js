@@ -6,6 +6,8 @@ const {
     WalletTransaction,
     VisitedLink,
     BookedLink,
+    ServicePlanTierInfo,
+    AgentInfo,
 } = require("../mongo_db_connections");
 
 
@@ -150,11 +152,22 @@ const update_agent_wallet = async (req, res, next) => {
         let transaction_type_id = "";
         let total_amount = 0;
         let total_action_points = 0;
+        let service_plan_wallet_actions_per_unit = 0;
         let _trans_type = await WalletTransactionType.findOne({constant: wallet_top_up_trans_type_constant});
+        let agent_info = await AgentInfo.find({user_id: oc_user_id});
+        if(agent_info.length>0){ 
+            let sp_obj = agent_info?.find(each=>each.property==="service_plan");
+            if(sp_obj?.value){
+                let spt = await ServicePlanTierInfo.findOne({constant: sp_obj?.value});
+                if(spt){
+                    service_plan_wallet_actions_per_unit = spt?.actions_per_unit;
+                }
+            }   
+        }
         if(_trans_type?._id){
             transaction_type_id = _trans_type?._id;
-            total_amount = _trans_type?.unit_cost; // To do Change to the right transaction amount based on wallet top-up
-            total_action_points = (_trans_type?.unit_action_point); // To do: Change to determine by agents current service contract
+            total_amount = new_balance;
+            total_action_points = (service_plan_wallet_actions_per_unit * new_balance);
             //type
             //title,
             //cost_currency,
