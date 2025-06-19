@@ -44,6 +44,7 @@ app.use("/api/activities", require("./routes/oc_activity_log_routes"));
 app.use("/api/sales", require("./routes/sales_routes"));
 app.use("/api/news-letter", require("./routes/news_letter_routes"));
 app.use("/api/payments", require("./routes/payments_routes"));
+app.use("/api/service-plan", require("./routes/service_plan_routes"));
 
 // Local Utilities
 const check_is_cust_prod_db = () => {
