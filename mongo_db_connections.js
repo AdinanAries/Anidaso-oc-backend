@@ -26,7 +26,8 @@ const companyInfoSchema = require("./models/companyInfo");
 const agentServiceFeeSchema = require("./models/agentServiceFee");
 const ocActivityLogSchema = require("./models/ocActivityLog");
 const newsLetterSchema = require("./models/newsLetter");
-servicePlanTierInfoSchema = require("./models/servicePlanTierInfo");
+const servicePlanTierInfoSchema = require("./models/servicePlanTierInfo");
+const travelDealPackageSchema = require("./models/travelDealPackage");
 
 // mongo connections strings
 // to be deleted: const mongo_db_url = process.env.MONGO_DB_URL;
@@ -78,6 +79,7 @@ const AgentServiceFee = welldugo_oc_conn.model("AgentServiceFee", agentServiceFe
 const OcActivityLog = welldugo_oc_conn.model("OcActivityLog", ocActivityLogSchema);
 const NewsLetter = welldugo_oc_conn.model("NewsLetter", newsLetterSchema);
 const ServicePlanTierInfo = welldugo_oc_conn.model("ServicePlanTierInfo", servicePlanTierInfoSchema);
+const TravelDealPackage = welldugo_oc_conn.model("TravelDealPackage", travelDealPackageSchema);
 
 module.exports = {
     BookingHistory,
@@ -106,6 +108,7 @@ module.exports = {
     OcActivityLog,
     NewsLetter,
     ServicePlanTierInfo,
+    TravelDealPackage,
     // DB params
     DbEnvs: {
         customer: welldugo_db_url,

@@ -88,7 +88,7 @@ const add_customer = async (req, res, next) => {
         // Items with Id already exists
         if(__id){
 
-            // Check if service fee exists 
+            // Check if Customer exists 
             let customerExists = await Customer.findOne({_id: __id});
 
             if(customerExists) {
@@ -193,7 +193,7 @@ const add_customer = async (req, res, next) => {
         }).catch((err) => {
             console.log(err);
             res.status(500);
-            res.send({message: 'Booking link could not be created'});
+            res.send({message: 'Customer could not be created'});
         });
     }catch(e){
         console.log(e);
