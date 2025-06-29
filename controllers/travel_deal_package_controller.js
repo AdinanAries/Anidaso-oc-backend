@@ -104,7 +104,7 @@ const add_travel_deal_package = async (req, res, next) => {
             travel_destination,
             start_date,
             end_date,
-            include_dults,
+            include_adults,
             include_children,
             include_infants,
             max_num_of_adults,
@@ -132,7 +132,7 @@ const add_travel_deal_package = async (req, res, next) => {
             !travel_destination ||
             !start_date ||
             !end_date ||
-            include_dults===undefined ||
+            include_adults===undefined ||
             include_children===undefined ||
             include_infants===undefined ||
             max_num_of_adults===undefined ||
@@ -167,7 +167,7 @@ const add_travel_deal_package = async (req, res, next) => {
                     travel_destination,
                     start_date,
                     end_date,
-                    include_dults,
+                    include_adults,
                     include_children,
                     include_infants,
                     max_num_of_adults,
@@ -207,7 +207,7 @@ const add_travel_deal_package = async (req, res, next) => {
                     travel_destination: dealPackageExists?.travel_destination,
                     start_date: dealPackageExists?.start_date,
                     end_date: dealPackageExists?.end_date,
-                    include_dults: dealPackageExists?.include_dults,
+                    include_adults: dealPackageExists?.include_adults,
                     include_children: dealPackageExists?.include_children,
                     include_infants: dealPackageExists?.include_infants,
                     max_num_of_adults: dealPackageExists?.max_num_of_adults,
@@ -236,7 +236,7 @@ const add_travel_deal_package = async (req, res, next) => {
             travel_destination,
             start_date,
             end_date,
-            include_dults,
+            include_adults,
             include_children,
             include_infants,
             max_num_of_adults,
@@ -261,7 +261,7 @@ const add_travel_deal_package = async (req, res, next) => {
                 travel_destination: result?.travel_destination,
                 start_date: result?.start_date,
                 end_date: result?.end_date,
-                include_dults: result?.include_dults,
+                include_adults: result?.include_adults,
                 include_children: result?.include_children,
                 include_infants: result?.include_infants,
                 max_num_of_adults: result?.max_num_of_adults,
@@ -300,31 +300,56 @@ const search_travel_deal_package = async(req, res, next) => { // To do: fix this
         --offset; //offset starts from 0 as of array indexes
         let limit = parseInt(req.params.limit);
 
+        let {
+            filters,
+        } = req.body;
+
         if(!user_id){
             res.status(400);
             res.send({message: "oc_user_id field is required!"});
             return;
         }
 
-        let q2 = q;
-        if(q.trim().includes(" ")){
-            const _q = q.trim().split(" ");
-            q = _q[0];
-            q2 = _q[1];
+        let user = await User.findOne({_id: user_id});
+
+        if(!user){
+            res.status(400);
+            res.send({message: "User account could not be verified!"});
+            return;
         }
 
-        const search_obj = {
-            oc_user_id: user_id, 
+        role_info={};
+        if(user?.role_id){
+            role_info = await UserRole.findOne({_id: user?.role_id});
+        }
+
+        if(!role_info){
+            res.status(400);
+            res.send({message: "User role could not be confirmed!"});
+            return;
+        }
+
+        let find_obj = {
             deleted: false,
+            oc_user_id: user_id
+        };
+
+        if(
+            role_info?.constant===CONSTANTS.app_role_constants.admin ||
+            role_info?.constant===CONSTANTS.app_role_constants.owner
+        ){
+            delete find_obj.oc_user_id;
+        }
+
+        find_obj = {
+            ...find_obj,
             $or: [
-                {first_name: { $regex : q, $options: 'i'}},
-                {last_name: { $regex : q2, $options: 'i'}},
-                {email: { $regex : q, $options: 'i'}},
-                {phone: { $regex : q, $options: 'i'}}
+                {title: { $regex : q, $options: 'i'}},
+                {travel_destination: { $regex : q, $options: 'i'}}
             ]
         }
 
-        let total_items = await TravelDealPackage.count(search_obj).catch(err => {
+        let total_items = await TravelDealPackage.count(find_obj).catch(err => {
             console.log(err);
             res.send([]);
             return;
@@ -332,13 +357,13 @@ const search_travel_deal_package = async(req, res, next) => { // To do: fix this
 
         res.set("Pagination-Total-Items", total_items);
 
-        let _customers = await TravelDealPackage.find(search_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
+        let _deals_packages = await TravelDealPackage.find(find_obj).sort({ _id: -1 }).skip((offset)).limit(limit).catch(err => {
             console.log(err);
             res.send([]);
             return;
         });
         
-        res.send(_customers);
+        res.send(_deals_packages);
 
     }catch(e){
         console.log(e);

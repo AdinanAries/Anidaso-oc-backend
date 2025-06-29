@@ -44,7 +44,7 @@ const travelDealPackageSchema = new Schema({
         type: String,
         required: [true, "Please add end date"],
     },
-    include_dults: {
+    include_adults: {
         type: Boolean,
         required: [true, "Please add include adults field"],
     },

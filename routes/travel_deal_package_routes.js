@@ -13,7 +13,7 @@ const {
 
 // routes
 router.post("/all/:oc_user_id/:offset/:limit", protect, get_travel_deal_packages);
-router.get("/search/:oc_user_id/:offset/:limit/:query", protect, search_travel_deal_package);
+router.post("/search/:oc_user_id/:offset/:limit/:query", protect, search_travel_deal_package);
 router.post("/create/", protect, add_travel_deal_package);
 
 module.exports = router;
